@@ -11,11 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    /*
-     * POST /api/v1/auth/token
-     * L'utilisateur envoie email + password
-     * Il reçoit un token Bearer en retour
-     */
+    
     public function token(Request $request): JsonResponse
     {
         // Validation des données reçues
@@ -49,11 +45,7 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * DELETE /api/v1/auth/token
-     * L'utilisateur envoie son token
-     * Le token est supprimé (déconnexion API)
-     */
+    
     public function revoke(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();

@@ -9,10 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class EntityController extends Controller
 {
-    /**
-     * GET /api/v1/entities
-     * Retourne toutes les entités actives
-     */
+    
     public function index(): JsonResponse
     {
         $entities = Entity::roots()
@@ -22,10 +19,7 @@ class EntityController extends Controller
         return response()->json($entities);
     }
 
-    /**
-     * GET /api/v1/entities/tree
-     * Retourne l'arbre complet de l'organisation
-     */
+    
     public function tree(): JsonResponse
     {
         $tree = Entity::roots()
@@ -35,10 +29,7 @@ class EntityController extends Controller
         return response()->json($tree);
     }
 
-    /**
-     * GET /api/v1/entities/{id}
-     * Retourne une entité avec ses enfants
-     */
+    
     public function show(int $id): JsonResponse
     {
         $entity = Entity::with([
@@ -49,10 +40,7 @@ class EntityController extends Controller
         return response()->json($entity);
     }
 
-    /**
-     * POST /api/v1/entities
-     * Créer une nouvelle entité
-     */
+    
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -69,10 +57,7 @@ class EntityController extends Controller
         return response()->json($entity, 201);
     }
 
-    /**
-     * PUT /api/v1/entities/{id}
-     * Modifier une entité existante
-     */
+    
     public function update(Request $request, int $id): JsonResponse
     {
         $entity = Entity::findOrFail($id);
@@ -90,11 +75,7 @@ class EntityController extends Controller
         return response()->json($entity);
     }
 
-    /**
-     * DELETE /api/v1/entities/{id}
-     * Désactiver une entité
-     * Impossible si des agents actifs y sont rattachés
-     */
+    
     public function destroy(int $id): JsonResponse
     {
         $entity = Entity::findOrFail($id);

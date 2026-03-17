@@ -22,34 +22,20 @@ class Fonction extends Model
         'niveau'    => 'integer',
     ];
 
-    // ─── RELATIONS ────────────────────────────────────────
-
-    /**
-     * Agents qui occupent cette fonction
-     */
+   
     public function agents(): HasMany
     {
         return $this->hasMany(Agent::class, 'fonction_id');
     }
 
-    // ─── SCOPES ───────────────────────────────────────────
-
-    /**
-     * Scope : uniquement les fonctions actives
-     * triées par niveau hiérarchique
-     */
+    
     public function scopeActive($query)
     {
         return $query->where('is_active', true)
                      ->orderBy('niveau');
     }
 
-    // ─── METHODES METIER ──────────────────────────────────
-
-    /**
-     * Vérifie si des agents actifs utilisent cette fonction
-     * Utile avant de désactiver une fonction
-     */
+    
     public function hasActiveAgents(): bool
     {
         return $this->agents()

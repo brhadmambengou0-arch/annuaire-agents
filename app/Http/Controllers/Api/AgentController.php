@@ -9,10 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class AgentController extends Controller
 {
-    /**
-     * GET /api/v1/agents
-     * Liste filtrée et paginée des agents actifs
-     */
+  
     public function index(Request $request): JsonResponse
     {
         $agents = Agent::query()
@@ -46,10 +43,7 @@ class AgentController extends Controller
         return response()->json($agents);
     }
 
-    /**
-     * GET /api/v1/agents/{id}
-     * Fiche complète d'un agent avec ses relations
-     */
+   
     public function show(int $id): JsonResponse
     {
         $agent = Agent::with([
@@ -60,10 +54,7 @@ class AgentController extends Controller
         return response()->json($agent);
     }
 
-    /**
-     * POST /api/v1/agents
-     * Créer un nouvel agent
-     */
+   
     public function store(Request $request): JsonResponse
     {
         // Validation des données
@@ -93,10 +84,7 @@ class AgentController extends Controller
         );
     }
 
-    /**
-     * PUT /api/v1/agents/{id}
-     * Modifier un agent existant
-     */
+    
     public function update(Request $request, int $id): JsonResponse
     {
         $agent = Agent::findOrFail($id);
@@ -123,11 +111,6 @@ class AgentController extends Controller
         return response()->json($agent->load(['entity', 'fonction']));
     }
 
-    /**
-     * DELETE /api/v1/agents/{id}
-     * Désactiver un agent (soft delete)
-     * L'agent reste en base mais is_active = false
-     */
     public function destroy(int $id): JsonResponse
     {
         $agent = Agent::findOrFail($id);
