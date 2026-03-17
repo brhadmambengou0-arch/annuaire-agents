@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('code', 50)->unique();
             $table->string('libelle', 150);
-            $table->tinyInteger('niveau')->default(1);
+            
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
