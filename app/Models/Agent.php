@@ -21,10 +21,13 @@ class Agent extends Model
         'is_active',
     ];
 
-    protected $casts = [
+  protected function casts(): array
+{
+    return [
         'date_prise_fonction' => 'date',
-        'is_active'           => 'boolean ',
+        'is_active'           => 'boolean',
     ];
+}
 
    
     public function entity(): BelongsTo 
@@ -32,7 +35,7 @@ class Agent extends Model
         return $this->belongsTo(Entity::class);
     }
 
-    /
+    
     public function fonction(): BelongsTo
     {
         return $this->belongsTo(Fonction::class);
@@ -65,12 +68,12 @@ class Agent extends Model
             $q->where('nom',       'ILIKE', "%{$term}%")
               ->orWhere('prenom',  'ILIKE', "%{$term}%")
               ->orWhere('email',   'ILIKE', "%{$term}%")
-              ->orWhere('matricule', 'ILIKE', "%{$term}%");
+              ->orWhere('matricule',  'ILIKE', "%{$term}%");
         });
     }
 
     
-    public function scopeActive($query)
+    public function scopeActive($query) 
     {
         return $query->where('is_active', true);
     }

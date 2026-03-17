@@ -23,11 +23,13 @@ class Entity extends Model
     ];
 
     // Types des champs
-    protected $casts = [
+    protected function casts(): array
+{
+    return [
         'is_active' => 'boolean',
-        'ordre'     => 'int',
+        'ordre'     => 'integer',
     ];
-
+}
     
     public function children(): HasMany
     {
