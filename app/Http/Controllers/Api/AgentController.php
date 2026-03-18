@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateAgentRequest;
 use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class AgentController extends Controller
 {
@@ -44,6 +45,8 @@ class AgentController extends Controller
 
     public function store(StoreAgentRequest $request): JsonResponse
     {
+        Gate::authorize('create', Agent::class);
+
         $validated = $request->validated();
 
         if (isset($validated['nom'])) {
@@ -61,6 +64,9 @@ class AgentController extends Controller
     public function update(UpdateAgentRequest $request, int $id): JsonResponse
     {
         $agent = Agent::findOrFail($id);
+
+        Gate::authorize('update', $agent);
+
         $validated = $request->validated();
 
         if (isset($validated['nom'])) {
@@ -75,6 +81,9 @@ class AgentController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $agent = Agent::findOrFail($id);
+
+        Gate::authorize('delete', $agent);
+
         $agent->update(['is_active' => false]);
 
         return response()->json([
