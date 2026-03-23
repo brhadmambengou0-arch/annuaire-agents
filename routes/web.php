@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Appearance;
@@ -8,27 +9,17 @@ use App\Livewire\Admin\EntityManager;
 use App\Livewire\Admin\FonctionManager;
 
 Route::get('/', function () {
-    return redirect()->route('annuaire.index');
+    return view('welcome');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::get('/annuaire', function () {
-        return view('annuaire.index');
-    })->name('annuaire.index');
-
-    Route::middleware(['admin'])
-         ->prefix('admin')
-         ->name('admin.')
-         ->group(function () {
-             Route::get('/entites', EntityManager::class)->name('entities');
-           //  Route::get('/fonctions', FonctionManager::class)->name('fonctions');
-         });
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
-    Route::get('settings/profile',    Profile::class)->name('profile.edit');
-    Route::get('settings/appearance', Appearance::class)->name('appearance.edit');
-    Route::get('settings/security',   Security::class)->name('security.edit');
-});
+require __DIR__.'/auth.php';
