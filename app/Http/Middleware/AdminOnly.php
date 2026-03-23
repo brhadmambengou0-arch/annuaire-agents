@@ -11,7 +11,7 @@ class AdminOnly
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check() || auth()->user()->role !== 'admin') {
-            abort(403, 'Acces reserve aux administrateurs.');
+            abort(403, 'Accès interdit : réservé aux administrateurs.');
         }
 
         return $next($request);
