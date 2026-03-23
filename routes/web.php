@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Security;
+use App\Livewire\Admin\EntityManager;
+use App\Livewire\Admin\FonctionManager;
 
 Route::get('/', function () {
     return redirect()->route('annuaire.index');
@@ -11,23 +13,16 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    // Annuaire — accessible à tous les utilisateurs connectés
     Route::get('/annuaire', function () {
         return view('annuaire.index');
     })->name('annuaire.index');
 
-    // Administration — réservée aux admins uniquement
     Route::middleware(['admin'])
          ->prefix('admin')
          ->name('admin.')
          ->group(function () {
-             Route::get('/entites', function () {
-                 return view('admin.entities');
-             })->name('entities');
-
-             Route::get('/fonctions', function () {
-                 return view('admin.fonctions');
-             })->name('fonctions');
+             Route::get('/entites', EntityManager::class)->name('entities');
+           //  Route::get('/fonctions', FonctionManager::class)->name('fonctions');
          });
 });
 
