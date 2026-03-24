@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
          ->name('admin.')
          ->group(function () {
              Route::get('/entites', EntityManager::class)->name('entities');
-           //  Route::get('/fonctions', FonctionManager::class)->name('fonctions');
+            Route::get('/fonctions', FonctionManager::class)->name('fonctions');
          });
 });
 
