@@ -1,27 +1,40 @@
-<div class="bg-white p-4 rounded shadow hover:shadow-lg transition cursor-pointer"
-     wire:click="showDetails">
-    <div class="flex items-center space-x-4">
-        <img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="w-12 h-12 rounded-full">
-        <div>
-            <h3 class="font-semibold text-pink-700">{{ $agent->nom }} {{ $agent->prenom }}</h3>
-            <p class="text-gray-500">{{ $agent->fonction->nom ?? 'Fonction non définie' }}</p>
-        </div>
-    </div>
+<?php
 
-    <!-- Modal -->
-    @if($showModal)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div class="bg-white rounded shadow-lg p-6 w-96">
-                <h2 class="text-xl font-bold mb-4">{{ $agent->nom }} {{ $agent->prenom }}</h2>
-                <p><strong>Email:</strong> {{ $agent->email }}</p>
-                <p><strong>Téléphone:</strong> {{ $agent->telephone ?? 'N/A' }}</p>
-                <p><strong>Fonction:</strong> {{ $agent->fonction->nom ?? 'N/A' }}</p>
+namespace App\Livewire\Annuaire;
 
-                <button wire:click="closeModal"
-                        class="mt-4 bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    @endif
-</div>
+use App\Models\Agent;
+use Livewire\Component;
+
+class AgentCard extends Component
+{
+    public Agent $agent;
+
+    // Couleurs d'avatar assignées selon les initiales
+    protected array $avatarPalette = [
+        ['bg' => '#dbeafe', 'color' => '#1e40af'],
+        ['bg' => '#dcfce7', 'color' => '#166534'],
+        ['bg' => '#fef9c3', 'color' => '#854d0e'],
+        ['bg' => '#fce7f3', 'color' => '#9d174d'],
+        ['bg' => '#ede9fe', 'color' => '#5b21b6'],
+        ['bg' => '#ffedd5', 'color' => '#9a3412'],
+        ['bg' => '#e0f2fe', 'color' => '#075985'],
+        ['bg' => '#f0fdf4', 'color' => '#14532d'],
+    ];
+
+    public function getAvatarBgProperty(): string
+    {
+        $index = ord(strtoupper($this->agent->nom[0])) % count($this->avatarPalette);
+        return $this->avatarPalette[$index]['bg'];
+    }
+
+    public function getAvatarColorProperty(): string
+    {
+        $index = ord(strtoupper($this->agent->nom[0])) % count($this->avatarPalette);
+        return $this->avatarPalette[$index]['color'];
+    }
+
+    public function render()
+    {
+        return view('livewire.annuaire.agent-card');
+    }
+}

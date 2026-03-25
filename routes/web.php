@@ -1,36 +1,26 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Security;
-use App\Livewire\Admin\EntityManager;
-use App\Livewire\Admin\FonctionManager;
 
+// Page d'accueil (protégée)
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->middleware('auth')->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Annuaire des agents (protégée)
+Route::get('/annuaire', function () {
+    return view('annuaire');
+})->middleware('auth')->name('annuaire');
 
-    Route::get('/annuaire', function () {
-        return view('annuaire.index');
-    })->name('annuaire.index');
+// Détail d'un agent (protégée)
+Route::get('/agent/{id}', function ($id) {
+    return view('agent', ['id' => $id]);
+})->middleware('auth')->name('agent.detail');
 
-    Route::middleware(['admin'])
-         ->prefix('admin')
-         ->name('admin.')
-         ->group(function () {
-             Route::get('/entites', EntityManager::class)->name('entities');
-            Route::get('/fonctions', FonctionManager::class)->name('fonctions');
-         });
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Dashboard admin (protégée)
+Route::get('/admin', function () {
+    return view('admin.dashboard');
+})->middleware('auth')->name('admin.dashboard');
 
+// Inclure les routes d'auth (login, register, logout…)
 require __DIR__.'/auth.php';
