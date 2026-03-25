@@ -9,7 +9,7 @@ use App\Livewire\Admin\EntityManager;
 use App\Livewire\Admin\FonctionManager;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {

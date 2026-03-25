@@ -1,97 +1,63 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Entity;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class EntityController extends Controller
 {
-    
-    public function index(): JsonResponse
+    public function index()
     {
-        $entities = Entity::roots()
-            ->with('childrenRecursive')
-            ->get();
-
-        return response()->json($entities);
+        return response()->json(
+            Entity::with('parent')->where('is_active', true)->get()
+        );
     }
 
-    
-    public function tree(): JsonResponse
+    public function store(Request $request)
     {
-        $tree = Entity::roots()
-            ->with('childrenRecursive')
-            ->get();
-
-        return response()->json($tree);
-    }
-
-    
-    public function show(int $id): JsonResponse
-    {
-        $entity = Entity::with([
-            'childrenRecursive',
-            'parent'
-        ])->findOrFail($id);
-
-        return response()->json($entity);
-    }
-
-    
-    public function store(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'nom'         => 'required|string|max:150',
-            'code'        => 'required|string|max:30|unique:entities',
-            'type'        => 'required|in:direction,service,departement',
-            'parent_id'   => 'nullable|exists:entities,id',
-            'description' => 'nullable|string',
-            'ordre'       => 'nullable|integer',
+        $data = $request->validate([
+            'nom' => 'required|string|max:150',
+            'code' => 'required|string|max:30|unique:entities,code',
+            'type' => 'required|in:direction,service,departement',
+            'parent_id' => 'nullable|exists:entities,id'
         ]);
 
-        $entity = Entity::create($validated);
+        $entity = Entity::create($data);
 
         return response()->json($entity, 201);
     }
 
-    
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, $id)
     {
         $entity = Entity::findOrFail($id);
 
-        $validated = $request->validate([
-            'nom'         => 'sometimes|string|max:150',
-            'type'        => 'sometimes|in:direction,service,departement',
-            'parent_id'   => 'nullable|exists:entities,id',
-            'description' => 'nullable|string',
-            'ordre'       => 'nullable|integer',
+        $data = $request->validate([
+            'nom' => 'required|string|max:150',
+            'code' => 'required|string|max:30|unique:entities,code,' . $id,
+            'type' => 'required|in:direction,service,departement',
+            'parent_id' => 'nullable|exists:entities,id'
         ]);
 
-        $entity->update($validated);
+        $entity->update($data);
 
         return response()->json($entity);
     }
 
-    
-    public function destroy(int $id): JsonResponse
+    public function destroy($id)
     {
         $entity = Entity::findOrFail($id);
 
-        // Vérifier qu'aucun agent actif n'est rattaché
+        // 🔥 règle métier
         if ($entity->agents()->where('is_active', true)->exists()) {
             return response()->json([
-                'message' => 'Impossible : des agents actifs sont rattachés à cette entité.'
-            ], 422);
+                'message' => 'Impossible de supprimer une entité contenant des agents'
+            ], 400);
         }
 
         $entity->update(['is_active' => false]);
 
-        return response()->json([
-            'message' => 'Entité désactivée.',
-            'id'      => $entity->id,
-        ]);
+        return response()->json(['message' => 'Entité désactivée']);
     }
 }

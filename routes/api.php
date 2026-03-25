@@ -1,37 +1,27 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AgentController;
-use App\Http\Controllers\Api\EntityController;
-use App\Http\Controllers\Api\FonctionController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Admin\EntityController;
+use App\Http\Controllers\Admin\FonctionController;
 
 Route::prefix('v1')->group(function () {
 
-    // Authentification
-    Route::post('/auth/token',   [AuthController::class, 'token']);
-    Route::delete('/auth/token', [AuthController::class, 'revoke'])
-         ->middleware('auth:sanctum');
+    // 🔓 accès public (lecture)
+    Route::get('/entities', [EntityController::class, 'index']);
+    Route::get('/fonctions', [FonctionController::class, 'index']);
 
-    // Lecture publique sans token
-    Route::get('/entities',       [EntityController::class, 'index']);
-    Route::get('/entities/tree',  [EntityController::class, 'tree']);
-    Route::get('/entities/{id}',  [EntityController::class, 'show']);
-    Route::get('/fonctions',      [FonctionController::class, 'index']);
-    Route::get('/fonctions/{id}', [FonctionController::class, 'show']);
-    Route::get('/agents',         [AgentController::class, 'index']);
-    Route::get('/agents/{id}',    [AgentController::class, 'show']);
+    // 🔐 routes protégées
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
-    // Écriture avec token Sanctum
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/entities',         [EntityController::class, 'store']);
-        Route::put('/entities/{id}',     [EntityController::class, 'update']);
-        Route::delete('/entities/{id}',  [EntityController::class, 'destroy']);
-        Route::post('/fonctions',        [FonctionController::class, 'store']);
-        Route::put('/fonctions/{id}',    [FonctionController::class, 'update']);
+        // ENTITÉS
+        Route::post('/entities', [EntityController::class, 'store']);
+        Route::put('/entities/{id}', [EntityController::class, 'update']);
+        Route::delete('/entities/{id}', [EntityController::class, 'destroy']);
+
+        // FONCTIONS
+        Route::post('/fonctions', [FonctionController::class, 'store']);
+        Route::put('/fonctions/{id}', [FonctionController::class, 'update']);
         Route::delete('/fonctions/{id}', [FonctionController::class, 'destroy']);
-        Route::post('/agents',           [AgentController::class, 'store']);
-        Route::put('/agents/{id}',       [AgentController::class, 'update']);
-        Route::delete('/agents/{id}',    [AgentController::class, 'destroy']);
     });
+
 });

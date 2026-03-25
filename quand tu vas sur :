@@ -1,0 +1,15 @@
+[90m= [39m[34;4mApp\Models\User[39;24m {#6505
+    [34mid[39m: [35m1[39m,
+    [34mname[39m: "[32mAdministrateur[39m",
+    [34memail[39m: "[32madmin@institution.sn[39m",
+    [34memail_verified_at[39m: [36mnull[39m,
+    #[33mpassword[39m: "[32m$2y$12$tDHoVRoWbJBkjltM38t1AeC62v6oHCcyNdhuI7dmAXUBhAS8HGH7e[39m",
+    #[33mremember_token[39m: [36mnull[39m,
+    [34mcreated_at[39m: "[32m2026-03-16 16:52:51[39m",
+    [34mupdated_at[39m: "[32m2026-03-16 16:52:51[39m",
+    [34mtwo_factor_secret[39m: [36mnull[39m,
+    [34mtwo_factor_recovery_codes[39m: [36mnull[39m,
+    [34mtwo_factor_confirmed_at[39m: [36mnull[39m,
+    [34mrole[39m: "[32madmin[39m",
+  }
+

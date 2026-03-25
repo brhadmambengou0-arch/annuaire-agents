@@ -26,4 +26,7 @@ class AppServiceProvider extends ServiceProvider
         // Cela dit à Laravel : pour le modèle Agent, utilise AgentPolicy
         Gate::policy(Agent::class, AgentPolicy::class);
     }
+    protected $policies = [
+    \App\Models\Agent::class => \App\Policies\AgentPolicy::class,
+];
 }
