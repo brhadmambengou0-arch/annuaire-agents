@@ -1,34 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Security;
-use App\Livewire\Admin\EntityManager;
-use App\Livewire\Admin\FonctionManager;
 
+// Page d'accueil (protégée)
 Route::get('/', function () {
-    return redirect()->route('annuaire.index');
-});
+    return view('home');
+})->middleware('auth')->name('home');
 
-Route::middleware(['auth'])->group(function () {
+// Annuaire des agents (protégée)
+Route::get('/annuaire', function () {
+    return view('annuaire');
+})->middleware('auth')->name('annuaire');
 
-    Route::get('/annuaire', function () {
-        return view('annuaire.index');
-    })->name('annuaire.index');
+// Détail d'un agent (protégée)
+Route::get('/agent/{id}', function ($id) {
+    return view('agent', ['id' => $id]);
+})->middleware('auth')->name('agent.detail');
 
-    Route::middleware(['admin'])
-         ->prefix('admin')
-         ->name('admin.')
-         ->group(function () {
-             Route::get('/entites', EntityManager::class)->name('entities');
-           //  Route::get('/fonctions', FonctionManager::class)->name('fonctions');
-         });
-});
+// Dashboard admin (protégée)
+Route::get('/admin', function () {
+    return view('admin.dashboard');
+})->middleware('auth')->name('admin.dashboard');
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
-    Route::get('settings/profile',    Profile::class)->name('profile.edit');
-    Route::get('settings/appearance', Appearance::class)->name('appearance.edit');
-    Route::get('settings/security',   Security::class)->name('security.edit');
-});
+// Inclure les routes d'auth (login, register, logout…)
+require __DIR__.'/auth.php';
