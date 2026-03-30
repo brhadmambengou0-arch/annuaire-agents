@@ -1,109 +1,84 @@
-<x-guest-layout>
+<x-layouts.aninf-guest>
+    <x-slot name="title">Demande d'accès — ANINF</x-slot>
 
-<div class="min-h-screen flex">
+    <div class="w-full" style="max-width:420px;">
+        <div class="rounded-2xl" style="background:#fff;border:1px solid #d0e8f8;overflow:hidden;
+             box-shadow:0 2px 4px rgba(13,79,124,.04),0 8px 32px rgba(13,79,124,.07);">
 
-    <!--  Partie gauche -->
-    <div class="hidden md:flex w-1/2 bg-blue-600 text-white items-center justify-center">
-        <div class="text-center p-10">
-            <h1 class="text-3xl font-bold mb-4">Annuaire des Agents</h1>
-            <p class="text-sm opacity-80">
-                Créez votre compte pour accéder à la plateforme
-            </p>
-        </div>
-    </div>
-
-    <!--  Partie droite -->
-    <div class="flex w-full md:w-1/2 items-center justify-center bg-gray-100">
-
-        <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-
-            <!-- Titre -->
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Inscription</h2>
-                <p class="text-sm text-gray-500">Créer un nouveau compte</p>
+            <div class="text-center px-8 pt-8 pb-5">
+                <div class="flex items-center justify-center mx-auto mb-4 rounded-full"
+                     style="width:62px;height:62px;background:#1a7fc1;border:3px solid #e8f4fd;">
+                    <svg style="width:28px;height:28px;fill:#fff;" viewBox="0 0 24 24">
+                        <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <h1 class="aninf-display font-semibold mb-1" style="font-size:21px;color:#0d4f7c;">
+                    Demande d'accès
+                </h1>
+                <p style="font-size:13px;color:#7aaecc;">Créer un compte agent ANINF</p>
             </div>
 
-            <!-- ERREURS -->
-            @if ($errors->any())
-                <div class="mb-4 bg-red-100 text-red-600 p-3 rounded">
-                    <ul class="text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>• {{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            <div class="px-8 pb-8">
+                @if($errors->any())
+                    <div class="rounded-xl px-4 py-3 mb-4" style="background:#fef2f2;border:0.5px solid #fecaca;color:#dc2626;font-size:13px;">
+                        @foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach
+                    </div>
+                @endif
 
-            <!-- FORM -->
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
 
-                <!-- Nom -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Nom</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required
-                        class="w-full mt-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+                    <div class="mb-4">
+                        <label style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#4a7fa0;margin-bottom:6px;">Nom complet *</label>
+                        <input name="name" type="text" value="{{ old('name') }}" required autofocus
+                               placeholder="Prénom NOM"
+                               style="width:100%;height:44px;border:1px solid #d0e8f8;border-radius:10px;padding:0 12px;font-size:13px;color:#0d4f7c;background:#f9fcff;outline:none;font-family:'DM Sans',sans-serif;"
+                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
+                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
+                    </div>
 
-                <!-- Email -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required
-                        class="w-full mt-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+                    <div class="mb-4">
+                        <label style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#4a7fa0;margin-bottom:6px;">Email *</label>
+                        <input name="email" type="email" value="{{ old('email') }}" required
+                               placeholder="votre.email@aninf.ga"
+                               style="width:100%;height:44px;border:1px solid #d0e8f8;border-radius:10px;padding:0 12px;font-size:13px;color:#0d4f7c;background:#f9fcff;outline:none;font-family:'DM Sans',sans-serif;"
+                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
+                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
+                    </div>
 
-                <!-- Mot de passe -->
-                <div class="mb-4 relative">
-                    <label class="block text-sm font-medium text-gray-700">Mot de passe</label>
-                    <input type="password" name="password" id="password" required
-                        class="w-full mt-1 border rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <div class="mb-4">
+                        <label style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#4a7fa0;margin-bottom:6px;">Mot de passe *</label>
+                        <input name="password" type="password" required
+                               placeholder="Minimum 8 caractères"
+                               style="width:100%;height:44px;border:1px solid #d0e8f8;border-radius:10px;padding:0 12px;font-size:13px;color:#0d4f7c;background:#f9fcff;outline:none;font-family:'DM Sans',sans-serif;"
+                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
+                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
+                    </div>
 
-                    <span onclick="togglePassword('password')" 
-                          class="absolute right-3 top-9 cursor-pointer text-gray-500">
-                        
-                    </span>
-                </div>
+                    <div class="mb-6">
+                        <label style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#4a7fa0;margin-bottom:6px;">Confirmation *</label>
+                        <input name="password_confirmation" type="password" required
+                               placeholder="Répétez le mot de passe"
+                               style="width:100%;height:44px;border:1px solid #d0e8f8;border-radius:10px;padding:0 12px;font-size:13px;color:#0d4f7c;background:#f9fcff;outline:none;font-family:'DM Sans',sans-serif;"
+                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
+                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
+                    </div>
 
-                <!-- Confirmation -->
-                <div class="mb-4 relative">
-                    <label class="block text-sm font-medium text-gray-700">Confirmer mot de passe</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" required
-                        class="w-full mt-1 border rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <button type="submit"
+                            class="w-full"
+                            style="height:46px;background:#1a7fc1;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;"
+                            onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                        Créer mon compte
+                    </button>
+                </form>
 
-                    <span onclick="togglePassword('password_confirmation')" 
-                          class="absolute right-3 top-9 cursor-pointer text-gray-500">
-                        
-                    </span>
-                </div>
-
-                <!-- Bouton -->
-                <button type="submit"
-                    class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                    S'inscrire
-                </button>
-
-                <!-- Lien login -->
-                <p class="text-sm text-center mt-4">
+                <div class="text-center mt-5" style="font-size:13px;color:#8ab2c8;">
                     Déjà un compte ?
-                    <a href="{{ route('login') }}" class="text-blue-600 hover:underline">
+                    <a href="{{ route('login') }}" style="font-weight:500;color:#1a7fc1;text-decoration:none;">
                         Se connecter
                     </a>
-                </p>
-
-            </form>
-
+                </div>
+            </div>
         </div>
-
     </div>
-
-</div>
-
-<!-- SCRIPT -->
-<script>
-function togglePassword(id) {
-    let input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-}
-</script>
-
-</x-guest-layout>
+</x-layouts.aninf-guest>
