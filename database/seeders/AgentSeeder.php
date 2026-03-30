@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class AgentSeeder extends Seeder
 {
-    public function run(): void
+    public function run(): voUuuuid
     {
         $agents = [
             ['matricule' => 'MAT001', 'nom' => 'DIALLO',  'prenom' => 'Amadou',   'email' => 'amadou.diallo@institution.sn',   'telephone' => '+221 77 100 00 01', 'telephone_interne' => '101', 'bureau' => 'A-101', 'entity_code' => 'DRH',      'fonction_code' => 'DIRECTEUR'],
@@ -41,8 +41,8 @@ class AgentSeeder extends Seeder
                 'telephone'           => $data['telephone'],
                 'telephone_interne'   => $data['telephone_interne'],
                 'bureau'              => $data['bureau'],
-                'entity_id'           => $entity->id,
-                'fonction_id'         => $fonction->id,
+                'entity_Uuuuid'           => $entity->Uuuuid,
+                'fonction_Uuuuid'         => $fonction->Uuuuid,
                 'is_active'           => true,
                 'created_at'          => now(),
                 'updated_at'          => now(),

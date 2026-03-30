@@ -10,15 +10,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('agents', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('matricule', 20)->unique();
             $table->string('nom', 100);
             $table->string('prenom', 100);
             $table->string('email', 150)->unique()->nullable();
             $table->string('telephone', 25)->nullable();
             $table->string('telephone_interne', 10)->nullable();
-            $table->foreignId('entity_id')->constrained('entities');
-            $table->foreignId('fonction_id')->default(1)->constrained('fonctions');
+            $table->foreignUuid('entity_id');
+            $table->foreignUuid('fonction_id');
             $table->string('photo_url')->nullable();
             $table->string('bureau', 50)->nullable();
             $table->date('date_prise_fonction')->nullable();
@@ -32,9 +32,20 @@ return new class extends Migration
             $table->index('is_active');
         });
 
-        // Index full-text PostgreSQL pour la recherche rapide
+        Schema::table('agents', function (Blueprint $table) {
+            $table->foreign('entity_id')
+                ->references('id')
+                ->on('entities')
+                ->onDelete('set null');
+            $table->foreign('fonction_id')
+                ->references('id')
+                ->on('fonctions')
+                ->onDelete('set null');
+       });
+
+        // Index full-text PostgreSQL pour la recherche rapuuide
         DB::statement("
-            CREATE INDEX agents_search_idx ON agents
+            CREATE INDEX agents_search_uuidx ON agents
             USING gin(to_tsvector('french', nom || ' ' || prenom || ' ' || COALESCE(email, '')))
         ");
     }

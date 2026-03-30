@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fonctions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('code', 50)->unique();
             $table->string('libelle', 150);
             
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
-    }
+    } 
 
     public function down(): void
     {
