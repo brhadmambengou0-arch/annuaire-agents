@@ -1,216 +1,153 @@
-{{-- Modal formulaire agent — AgentForm --}}
-@if($showModal)
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-     style="background:rgba(13,79,124,.18);"
-     x-data @click.self="$wire.set('showModal', false)">
+<div>
+    @if($showModal)
+    <div class="modal-overlay" wire:click.self="closeModal">
+        <div class="modal-box" onclick="event.stopPropagation()">
 
-    <div class="w-full overflow-hidden rounded-2xl" style="max-width:560px;background:#fff;border:1px solid #c8e1f5;max-height:90vh;overflow-y:auto;">
+            {{-- Header --}}
+            <div class="modal-header">
+                <h5>
+                    @if($isEdit)
+                    <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" style="display:inline;margin-right:6px;">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Modifier l'agent
+                    @else
+                    <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" style="display:inline;margin-right:6px;">
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                    Ajouter un agent
+                    @endif
+                </h5>
+                <button wire:click="closeModal" class="modal-close">×</button>
+            </div>
 
-        {{-- En-tête --}}
-        <div class="flex items-center justify-between px-6 py-4 sticky top-0 z-10"
-             style="background:linear-gradient(135deg,#1a7fc1,#0d6fa8);">
-            <h2 class="font-display font-semibold text-white" style="font-size:16px;">
-                {{ $agentId ? 'Modifier l\'agent' : 'Ajouter un agent' }}
-            </h2>
-            <button wire:click="$set('showModal', false)"
-                    class="flex items-center justify-center rounded-full text-white text-lg"
-                    style="width:28px;height:28px;background:rgba(255,255,255,.2);border:none;cursor:pointer;">
-                ✕
-            </button>
-        </div>
+            {{-- Body --}}
+            <div class="modal-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
 
-        <div class="px-6 py-5">
-            <form wire:submit="save">
-
-                {{-- Section : Identité --}}
-                <div class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#4a7fa0;">
-                    Identité
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-4">
                     {{-- Matricule --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Matricule *
-                        </label>
-                        <input wire:model="matricule"
-                               type="text"
-                               placeholder="MAT001"
-                               {{ $agentId ? 'readonly' : '' }}
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid {{ $errors->has('matricule') ? '#fca5a5' : '#d0e8f8' }};
-                                      background:{{ $agentId ? '#f1f5f9' : '#f9fcff' }};
-                                      color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="if(!this.readOnly){this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'}"
-                               onblur="this.style.borderColor='{{ $errors->has('matricule') ? '#fca5a5' : '#d0e8f8' }}';this.style.boxShadow='none'" />
-                        @error('matricule')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                    @if(!$isEdit)
+                    <div class="form-group" style="grid-column:1/-1;">
+                        <label class="form-label">Matricule <span>*</span></label>
+                        <input wire:model="matricule" type="text" placeholder="Ex: MAT001"
+                               class="form-control {{ $errors->has('matricule') ? 'error' : '' }}"
+                               style="text-transform:uppercase;">
+                        @error('matricule') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+                    @endif
+
+                    {{-- Nom --}}
+                    <div class="form-group">
+                        <label class="form-label">Nom <span>*</span></label>
+                        <input wire:model="nom" type="text" placeholder="NOM"
+                               class="form-control {{ $errors->has('nom') ? 'error' : '' }}"
+                               style="text-transform:uppercase;">
+                        @error('nom') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Prénom --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Prénom *
-                        </label>
-                        <input wire:model="prenom" type="text" placeholder="Ibrahima"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid {{ $errors->has('prenom') ? '#fca5a5' : '#d0e8f8' }};background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
-                        @error('prenom')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                    <div class="form-group">
+                        <label class="form-label">Prénom <span>*</span></label>
+                        <input wire:model="prenom" type="text" placeholder="Prénom"
+                               class="form-control {{ $errors->has('prenom') ? 'error' : '' }}">
+                        @error('prenom') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Nom --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Nom *
-                        </label>
-                        <input wire:model="nom" type="text" placeholder="SOW"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid {{ $errors->has('nom') ? '#fca5a5' : '#d0e8f8' }};background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
-                        @error('nom')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                    {{-- Email --}}
+                    <div class="form-group" style="grid-column:1/-1;">
+                        <label class="form-label">Email</label>
+                        <input wire:model="email" type="email" placeholder="prenom.nom@aninf.ga"
+                               class="form-control {{ $errors->has('email') ? 'error' : '' }}">
+                        @error('email') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Bureau --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Bureau
-                        </label>
-                        <input wire:model="bureau" type="text" placeholder="A-201"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid #d0e8f8;background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
-                    </div>
-                </div>
-
-                {{-- Section : Contact --}}
-                <div class="text-xs font-semibold uppercase tracking-widest mb-3 mt-1" style="color:#4a7fa0;border-top:0.5px solid #e0eff8;padding-top:16px;">
-                    Contact
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Email
-                        </label>
-                        <input wire:model="email" type="email" placeholder="i.sow@aninf.ga"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid {{ $errors->has('email') ? '#fca5a5' : '#d0e8f8' }};background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
-                        @error('email')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                    {{-- Téléphone --}}
+                    <div class="form-group">
+                        <label class="form-label">Téléphone</label>
+                        <input wire:model="telephone" type="text" placeholder="+241 XX XX XX XX"
+                               class="form-control {{ $errors->has('telephone') ? 'error' : '' }}">
+                        @error('telephone') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Téléphone
-                        </label>
-                        <input wire:model="telephone" type="text" placeholder="+241 77 100 001"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid #d0e8f8;background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
+                    {{-- Poste interne --}}
+                    <div class="form-group">
+                        <label class="form-label">Poste interne</label>
+                        <input wire:model="telephone_interne" type="text" placeholder="Ex: 201"
+                               class="form-control {{ $errors->has('telephone_interne') ? 'error' : '' }}">
+                        @error('telephone_interne') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Poste interne
-                        </label>
-                        <input wire:model="telephone_interne" type="text" placeholder="201"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid #d0e8f8;background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1';this.style.boxShadow='0 0 0 3px rgba(26,143,209,.1)'"
-                               onblur="this.style.borderColor='#d0e8f8';this.style.boxShadow='none'" />
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Date de prise de fonction
-                        </label>
-                        <input wire:model="date_prise_fonction" type="date"
-                               class="w-full rounded-xl text-sm outline-none px-3"
-                               style="height:42px;border:1px solid #d0e8f8;background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;"
-                               onfocus="this.style.borderColor='#1a7fc1'"
-                               onblur="this.style.borderColor='#d0e8f8'" />
-                    </div>
-                </div>
-
-                {{-- Section : Rattachement --}}
-                <div class="text-xs font-semibold uppercase tracking-widest mb-3 mt-1" style="color:#4a7fa0;border-top:0.5px solid #e0eff8;padding-top:16px;">
-                    Rattachement organisationnel
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-6">
                     {{-- Entité --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Structure *
-                        </label>
-                        <select wire:model="entityId"
-                                class="w-full rounded-xl text-sm outline-none px-3"
-                                style="height:42px;border:1px solid {{ $errors->has('entityId') ? '#fca5a5' : '#d0e8f8' }};background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;">
-                            <option value="">Sélectionner...</option>
-                            @foreach(\App\Models\Entity::where('is_active',true)->orderBy('nom')->get() as $entity)
+                    <div class="form-group" style="grid-column:1/-1;">
+                        <label class="form-label">Service / Département <span>*</span></label>
+                        <select wire:model="entity_id"
+                                class="form-control {{ $errors->has('entity_id') ? 'error' : '' }}">
+                            <option value="">— Sélectionner une structure —</option>
+                            @foreach($this->entities->groupBy('type') as $type => $entities)
+                            <optgroup label="{{ ucfirst($type) }}s">
+                                @foreach($entities as $entity)
                                 <option value="{{ $entity->id }}">{{ $entity->nom }}</option>
+                                @endforeach
+                            </optgroup>
                             @endforeach
                         </select>
-                        @error('entityId')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                        @error('entity_id') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Fonction --}}
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-widest mb-1.5" style="color:#4a7fa0;">
-                            Fonction *
-                        </label>
-                        <select wire:model="fonctionId"
-                                class="w-full rounded-xl text-sm outline-none px-3"
-                                style="height:42px;border:1px solid {{ $errors->has('fonctionId') ? '#fca5a5' : '#d0e8f8' }};background:#f9fcff;color:#0d4f7c;font-family:'DM Sans',sans-serif;">
-                            @foreach(\App\Models\Fonction::where('is_active',true)->orderBy('niveau')->get() as $f)
-                                <option value="{{ $f->id }}">Niv.{{ $f->niveau }} — {{ $f->libelle }}</option>
+                    <div class="form-group" style="grid-column:1/-1;">
+                        <label class="form-label">Fonction <span>*</span></label>
+                        <select wire:model="fonction_id"
+                                class="form-control {{ $errors->has('fonction_id') ? 'error' : '' }}">
+                            @foreach($this->fonctions as $fonction)
+                            <option value="{{ $fonction->id }}">
+                                [Niv.{{ $fonction->niveau }}] {{ $fonction->libelle }}
+                            </option>
                             @endforeach
                         </select>
-                        @error('fonctionId')
-                            <span class="text-xs mt-1" style="color:#dc2626;">{{ $message }}</span>
-                        @enderror
+                        @error('fonction_id') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
-                </div>
 
-                {{-- Boutons --}}
-                <div class="flex justify-end gap-3">
-                    <button type="button"
-                            wire:click="$set('showModal', false)"
-                            class="text-sm px-5 py-2.5 rounded-xl transition"
-                            style="border:1px solid #d0e8f8;background:#fff;color:#7aaecc;cursor:pointer;font-family:'DM Sans',sans-serif;"
-                            onmouseover="this.style.background='#f0f7fd'"
-                            onmouseout="this.style.background='#fff'">
-                        Annuler
-                    </button>
-                    <button type="submit"
-                            class="text-sm font-semibold px-6 py-2.5 rounded-xl text-white transition flex items-center gap-2"
-                            style="background:#1a7fc1;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;"
-                            onmouseover="this.style.opacity='.9'"
-                            onmouseout="this.style.opacity='1'">
-                        <div wire:loading wire:target="save">
-                            <svg class="w-4 h-4 animate-spin fill-white" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-                        </div>
-                        {{ $agentId ? 'Enregistrer les modifications' : 'Créer l\'agent' }}
-                    </button>
-                </div>
+                    {{-- Bureau --}}
+                    <div class="form-group">
+                        <label class="form-label">Bureau</label>
+                        <input wire:model="bureau" type="text" placeholder="Ex: A-201"
+                               class="form-control {{ $errors->has('bureau') ? 'error' : '' }}">
+                        @error('bureau') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
 
-            </form>
+                    {{-- Date prise de fonction --}}
+                    <div class="form-group">
+                        <label class="form-label">Date de prise de fonction</label>
+                        <input wire:model="date_prise_fonction" type="date"
+                               class="form-control {{ $errors->has('date_prise_fonction') ? 'error' : '' }}">
+                        @error('date_prise_fonction') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer">
+                <button wire:click="closeModal" class="btn-ghost">Annuler</button>
+                <button wire:click="save" wire:loading.attr="disabled" class="btn-primary">
+                    <span wire:loading.remove wire:target="save">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="display:inline;margin-right:4px;">
+                            <polyline points="20,6 9,17 4,12"/>
+                        </svg>
+                        {{ $isEdit ? 'Enregistrer les modifications' : 'Ajouter l\'agent' }}
+                    </span>
+                    <span wire:loading wire:target="save" style="display:flex;align-items:center;gap:6px;">
+                        <span style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;"></span>
+                        Enregistrement...
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
+    @endif
 </div>
-@endif
