@@ -22,14 +22,13 @@ Route::middleware('auth')->group(function () {
              Route::get('/entites',   \App\Livewire\Admin\EntityManager::class)->name('entities');
              Route::get('/fonctions', \App\Livewire\Admin\FonctionManager::class)->name('fonctions');
          });
-<<<<<<< HEAD
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-=======
->>>>>>> origin/main
 });
 
 require __DIR__.'/auth.php';
