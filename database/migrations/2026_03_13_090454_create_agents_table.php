@@ -43,11 +43,13 @@ return new class extends Migration
                 ->onDelete('set null');
        });
 
-        // Index full-text PostgreSQL pour la recherche rapuuide
-        DB::statement("
-            CREATE INDEX agents_search_uuidx ON agents
-            USING gin(to_tsvector('french', nom || ' ' || prenom || ' ' || COALESCE(email, '')))
-        ");
+        // Index full-text PostgreSQL pour la recherche rapide
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("
+                CREATE INDEX agents_search_uuidx ON agents
+                USING gin(to_tsvector('french', nom || ' ' || prenom || ' ' || COALESCE(email, '')))
+            ");
+        }
     }
 
     public function down(): void

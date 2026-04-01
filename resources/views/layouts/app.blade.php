@@ -833,7 +833,7 @@
     @endif
 
     {{-- CONTENU --}}
-    {{ $slot }}
+    @yield('content')
 
     @livewireScripts
 </body>

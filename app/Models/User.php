@@ -6,12 +6,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
+
+    /**
+     * The data type of the primary key.
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     */
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
