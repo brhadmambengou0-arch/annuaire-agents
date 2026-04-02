@@ -24,6 +24,11 @@ class FonctionManager extends Component
     #[Validate('nullable|string')]
     public string $description = '';
 
+    public function getEditIdProperty()
+    {
+        return $this->fonctionId;
+    }
+
     // ── Actions ───────────────────────────────────────────
 
     public function openCreate(): void
@@ -85,9 +90,10 @@ class FonctionManager extends Component
     }
 
     public function render()
-    {
-        return view('livewire.admin.fonction-manager', [
-            'fonctions' => Fonction::orderBy('niveau')->orderBy('libelle')->get(),
-        ]);
-    }
+   
+{
+    return view('livewire.admin.fonction-manager', [
+        'fonctions' => Fonction::orderBy('libelle')->get(),
+    ]);
+}
 }

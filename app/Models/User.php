@@ -15,6 +15,13 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'uuid'; // ← AJOUT : Nom de la colonne clé primaire
+
+    /**
      * The data type of the primary key.
      */
     protected $keyType = 'string';
@@ -30,6 +37,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'uuid',
         'name',
         'email',
         'password',

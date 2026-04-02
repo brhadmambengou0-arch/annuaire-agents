@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class AgentSeeder extends Seeder
 {
-    public function run(): voUuuuid
+    public function run(): void
     {
         $agents = [
             ['matricule' => 'MAT001', 'nom' => 'DIALLO',  'prenom' => 'Amadou',   'email' => 'amadou.diallo@institution.sn',   'telephone' => '+221 77 100 00 01', 'telephone_interne' => '101', 'bureau' => 'A-101', 'entity_code' => 'DRH',      'fonction_code' => 'DIRECTEUR'],

@@ -47,6 +47,11 @@ class EntityManager extends Component
                      ->get();
     }
 
+    public function getEditIdProperty()
+    {
+        return $this->entityId;
+    }
+
     // ── Actions ───────────────────────────────────────────
 
     public function openCreate(): void
