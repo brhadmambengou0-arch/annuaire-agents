@@ -29,13 +29,13 @@
             <div>
                 <div class="aninf-display font-semibold" style="font-size:15px;color:#0d4f7c;line-height:1.1;">ANINF</div>
                 <div class="hidden sm:block uppercase tracking-widest" style="font-size:9px;color:#7aaecc;">
-                    Agence Nationale de l'Infrastructure Numérique
+                    Agence Nationale des Infrastructures Numériques
                 </div>
             </div>
         </a>
         <span class="text-xs font-medium px-3 py-1 rounded-full"
               style="background:#e8f4fd;color:#0d6fa8;border:0.5px solid #b0d8f0;">
-            Espace Agents
+            
         </span>
     </header>
 

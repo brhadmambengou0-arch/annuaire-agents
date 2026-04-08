@@ -191,8 +191,7 @@
                 <div style="display:flex;gap:0.6rem;">
                     @if(auth()->user()?->role === 'admin')
                     <button
-                        onclick="Livewire.dispatch('open-edit', { id: {{ $agent->id }} })"
-                        wire:click="closeDetail"
+                        wire:click="$dispatch('open-edit', { id: {{ $agent->id }} })"
                         class="btn-warning">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>

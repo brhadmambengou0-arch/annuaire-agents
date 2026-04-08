@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Fonction;
 
 class FonctionSeeder extends Seeder
 {
@@ -25,11 +25,10 @@ class FonctionSeeder extends Seeder
         ];
 
         foreach ($fonctions as $f) {
-            DB::table('fonctions')->insertOrIgnore(array_merge($f, [
-                'is_active'  => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            Fonction::firstOrCreate(
+                ['code' => $f['code']],
+                array_merge($f, ['is_active' => true])
+            );
         }
 
         $this->command->info('✅ 13 fonctions créées.');

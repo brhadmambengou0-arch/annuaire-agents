@@ -93,7 +93,6 @@
                         @endif
                     </div>
 
-                    <!-- Bouton connexion -->
                     <button type="submit"
                             class="w-full flex items-center justify-center gap-2"
                             style="height:46px;background:#1a7fc1;color:#fff;border:none;border-radius:10px;
@@ -102,9 +101,6 @@
                             onmouseout="this.style.opacity='1'"
                             onmousedown="this.style.transform='scale(.98)'"
                             onmouseup="this.style.transform='scale(1)'">
-                        <svg style="width:15px;height:15px;fill:rgba(255,255,255,.8);" viewBox="0 0 24 24">
-                            <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
-                        </svg>
                         Se connecter
                     </button>
                 </form>
@@ -114,14 +110,6 @@
                     <div class="flex-1" style="height:0.5px;background:#d0e8f8;"></div>
                     <span style="font-size:11px;color:#b0cfe0;">ou</span>
                     <div class="flex-1" style="height:0.5px;background:#d0e8f8;"></div>
-                </div>
-
-                <div class="text-center" style="font-size:13px;color:#8ab2c8;">
-                    Pas encore de compte ?
-                    <a href="{{ route('register') }}"
-                       style="font-weight:500;color:#1a7fc1;text-decoration:none;">
-                        Demander un accès
-                    </a>
                 </div>
             </div>
         </div>

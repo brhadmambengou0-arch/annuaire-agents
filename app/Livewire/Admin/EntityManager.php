@@ -4,10 +4,15 @@ namespace App\Livewire\Admin;
 
 use App\Models\Entity;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Validate;
 
 class EntityManager extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
+
     // ── Propriétés du formulaire ──────────────────────────
     public bool $showModal = false;
     public ?int $entityId  = null;
@@ -36,7 +41,7 @@ class EntityManager extends Component
     {
         return Entity::with('parent')
                      ->orderBy('ordre')
-                     ->get();
+                     ->paginate(12);
     }
 
     public function getParentsProperty()
@@ -101,23 +106,30 @@ class EntityManager extends Component
                       'parentId', 'description', 'ordre']);
     }
 
-    public function deactivate(int $id): void
+    public function toggleActive(int $id): void
     {
         $entity = Entity::findOrFail($id);
 
-        if ($entity->agents()->where('is_active', true)->exists()) {
+        if ($entity->agents()->where('is_active', true)->exists() && $entity->is_active) {
             session()->flash('error',
                 'Impossible : des agents actifs sont rattachés à cette entité.');
             return;
         }
 
-        $entity->update(['is_active' => false]);
-        session()->flash('success', 'Entité désactivée.');
+        $entity->update(['is_active' => ! $entity->is_active]);
+        session()->flash('success', $entity->is_active ? 'Entité réactivée.' : 'Entité désactivée.');
+    }
+
+    public function closeForm(): void
+    {
+        $this->showModal = false;
+        $this->reset(['entityId', 'nom', 'code', 'type',
+                      'parentId', 'description', 'ordre']);
     }
 
     public function render()
     {
-        return view('livewire.admin.entity-manager', [
+        return view('livewire.admin.entity_manager', [
             'entities' => $this->getEntitiesProperty(),
             'parents'  => $this->getParentsProperty(),
         ]);

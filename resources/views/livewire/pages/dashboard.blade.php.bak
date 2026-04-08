@@ -1,0 +1,263 @@
+{{-- dashboard consultant --}}
+<x-app-layout>
+
+<style>
+    /* page consultant */
+    .page-consultant {
+        background: #f0f9ff;
+        min-height: 100vh;
+    }
+
+    /* header */
+    .header-consultant {
+        background: linear-gradient(to right, #0369a1, #0ea5e9);
+        padding: 30px;
+        padding-bottom: 55px;
+    }
+    .header-consultant h1 {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+    .header-consultant .sous-titre {
+        color: rgba(255,255,255,0.7);
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    /* corps de la page */
+    .corps {
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-top: -30px;
+        padding: 0 20px 50px 20px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* carte de bienvenue */
+    .carte-bienvenue {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .icone-bienvenue {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #38bdf8, #0284c7);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        flex-shrink: 0;
+    }
+    .texte-bienvenue h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #075985;
+        margin: 0 0 8px 0;
+    }
+    .texte-bienvenue p {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* les 3 petites stats */
+    .zone-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .carte-stat {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .icone-stat {
+        width: 45px;
+        height: 45px;
+        background: #e0f2fe;
+        border-radius: 10px;
+        margin: 0 auto 12px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    .chiffre-stat {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0369a1;
+        margin-bottom: 5px;
+    }
+    .label-stat {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    /* zone des actions */
+    .zone-actions {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .zone-actions h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #075985;
+        text-align: center;
+        margin: 0 0 20px 0;
+    }
+    .grille-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+    .btn-action {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #334155;
+        background: white;
+        transition: 0.15s;
+    }
+    .btn-action:hover {
+        border-color: #7dd3fc;
+        background: #f0f9ff;
+        transform: translateY(-2px);
+    }
+    .icone-action {
+        width: 50px;
+        height: 50px;
+        background: #e0f2fe;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+    .titre-action {
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        color: #0369a1;
+    }
+    .desc-action {
+        font-size: 11px;
+        color: #94a3b8;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    /* responsive */
+    @media (max-width: 768px) {
+        .carte-bienvenue { flex-direction: column; text-align: center; }
+        .zone-stats { grid-template-columns: 1fr; }
+        .grille-actions { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+        .grille-actions { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="page-consultant">
+
+    {{-- header --}}
+    <div class="header-consultant">
+        <div style="max-width:1200px; margin:0 auto;">
+            <h1>Bienvenue dans l'Annuaire</h1>
+            <div class="sous-titre">
+                {{ auth()->user()->name ?? 'Utilisateur' }} — {{ now()->translatedFormat('l d F Y') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="corps">
+
+        {{-- message de bienvenue --}}
+        <div class="carte-bienvenue">
+            <div class="icone-bienvenue"></div>
+            <div class="texte-bienvenue">
+                <h2>Accès à l'annuaire des agents</h2>
+                <p>
+                    Consultez facilement les informations de contact de tous les agents.
+                    Utilisez les filtres pour trouver rapidement la personne que vous cherchez.
+                </p>
+            </div>
+        </div>
+
+        {{-- statistiques --}}
+        <div class="zone-stats">
+            <div class="carte-stat">
+                <div class="icone-stat"></div>
+                <div class="chiffre-stat">{{ $agents->where('is_active', true)->count() ?? 0 }}</div>
+                <div class="label-stat">Agents actifs</div>
+            </div>
+            <div class="carte-stat">
+                <div class="icone-stat"></div>
+                <div class="chiffre-stat">{{ $directions->count() ?? 0 }}</div>
+                <div class="label-stat">Directions</div>
+            </div>
+            <div class="carte-stat">
+                <div class="icone-stat"></div>
+                <div class="chiffre-stat">{{ $fonctions->count() ?? 0 }}</div>
+                <div class="label-stat">Fonctions</div>
+            </div>
+        </div>
+
+        {{-- boutons d'action --}}
+        <div class="zone-actions">
+            <h3>Actions principales</h3>
+            <div class="grille-actions">
+                <a href="{{ route('annuaire.index') }}" class="btn-action">
+                    <div class="icone-action"></div>
+                    <div class="titre-action">Consulter l'annuaire</div>
+                    <div class="desc-action">Voir tous les agents avec recherche et filtres</div>
+                </a>
+                <a href="{{ route('profile.edit') }}" class="btn-action">
+                    <div class="icone-action"></div>
+                    <div class="titre-action">Mon profil</div>
+                    <div class="desc-action">Gérer mes informations</div>
+                </a>
+                <a href="#" onclick="window.print()" class="btn-action">
+                    <div class="icone-action"></div>
+                    <div class="titre-action">Imprimer</div>
+                    <div class="desc-action">Exporter la page actuelle</div>
+                </a>
+                <a href="mailto:support@institution.sn" class="btn-action">
+                    <div class="icone-action"></div>
+                    <div class="titre-action">Support</div>
+                    <div class="desc-action">Contacter l'équipe technique</div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</x-app-layout>

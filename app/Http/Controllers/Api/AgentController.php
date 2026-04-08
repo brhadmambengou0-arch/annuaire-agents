@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
-class AgentController extends Controller
+class AgentController extends controller
 {
     public function index(Request $request): JsonResponse
     {

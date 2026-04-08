@@ -4,10 +4,15 @@ namespace App\Livewire\Admin;
 
 use App\Models\Fonction;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\Validate;
 
 class FonctionManager extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
+
     // ── Propriétés du formulaire ──────────────────────────
     public bool $showModal  = false;
     public ?int $fonctionId = null;
@@ -27,6 +32,11 @@ class FonctionManager extends Component
     public function getEditIdProperty()
     {
         return $this->fonctionId;
+    }
+
+    public function getFonctionsProperty()
+    {
+        return Fonction::orderBy('libelle')->paginate(12);
     }
 
     // ── Actions ───────────────────────────────────────────
@@ -89,11 +99,16 @@ class FonctionManager extends Component
         session()->flash('success', 'Fonction désactivée.');
     }
 
+    public function closeForm(): void
+    {
+        $this->showModal = false;
+        $this->reset(['fonctionId', 'code', 'libelle', 'niveau', 'description']);
+    }
+
     public function render()
-   
-{
-    return view('livewire.admin.fonction-manager', [
-        'fonctions' => Fonction::orderBy('libelle')->get(),
-    ]);
-}
+    {
+        return view('livewire.admin.fonction-manager', [
+            'fonctions' => Fonction::orderBy('libelle')->get(),
+        ]);
+    }
 }
