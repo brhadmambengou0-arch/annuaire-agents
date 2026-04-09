@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->uuid('agent_id')->nullable()->after('role');
-            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
+
+            $table->foreign('agent_id')
+                  ->references('id')
+                  ->on('agents')
+                  ->onDelete('set null');
+
             $table->index('agent_id');
         });
     }

@@ -10,6 +10,7 @@ use App\Models\Fonction;
 use App\Models\User;
 use App\Mail\AgentInvitation;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class DirectoryIndex extends Component
 {
@@ -21,21 +22,21 @@ class DirectoryIndex extends Component
         'open-edit' => 'openEdit',
     ];
 
-    //  Recherche & filtres
+    // Recherche & filtres
     public $search = '';
     public $directionId = null;
     public $entityId = null;
     public $fonctionId = null;
 
-    //  Modal
+    // Modal
     public $showDetail = false;
     public $showForm = false;
 
-    //  Agent sélectionné
+    // Agent sélectionné
     public $selectedAgent = null;
     public $agentId = null;
 
-    //  Formulaire
+    // Formulaire
     public $matricule;
     public $nom;
     public $prenom;
@@ -79,10 +80,12 @@ class DirectoryIndex extends Component
 
     public function updatingSelectedDirectionId()
     {
-        $this->entityId = null; // Reset entity when direction changes
+        $this->entityId = null;
     }
 
-    //  Données calculées
+    // =========================
+    // DONNÉES
+    // =========================
 
     public function getAgentsProperty()
     {
@@ -140,7 +143,9 @@ class DirectoryIndex extends Component
             ->get();
     }
 
-    //  Actions
+    // =========================
+    // ACTIONS
+    // =========================
 
     public function resetFilters()
     {
@@ -160,14 +165,14 @@ class DirectoryIndex extends Component
         $this->selectedAgent = null;
     }
 
-    //  Création
+    // Création
     public function openCreate()
     {
         $this->resetForm();
         $this->showForm = true;
     }
 
-    //  Edition
+    // Edition
     public function openEdit($id)
     {
         $agent = Agent::with('entity.parent')->findOrFail($id);
@@ -184,7 +189,6 @@ class DirectoryIndex extends Component
         $this->entityId = $agent->entity_id;
         $this->fonctionIdForm = $agent->fonction_id;
 
-        // Définir la direction basée sur l'entité
         if ($agent->entity) {
             $this->selectedDirectionId = $agent->entity->parent_uuid ?? $agent->entity_id;
         }
@@ -216,12 +220,14 @@ class DirectoryIndex extends Component
         ]);
     }
 
-    // Sauvegarde
+    // =========================
+    // SAUVEGARDE
+    // =========================
+
     public function save()
     {
         $this->validate();
 
-        // Créer l'agent
         $agent = Agent::updateOrCreate(
             ['id' => $this->agentId],
             [
@@ -238,33 +244,35 @@ class DirectoryIndex extends Component
             ]
         );
 
-        // ← AJOUT : créer automatiquement un compte utilisateur si c'est une création
-        if (!$this->agentId && $agent->email) {
-            // Générer un mot de passe temporaire
+        // Création compte utilisateur automatique
+        if (empty($this->agentId) && !empty($agent->email)) {
+
             $tempPassword = 'Temp' . rand(1000, 9999) . '!';
 
-            // Créer le compte utilisateur
-            $user = User::create([
-                'name' => $agent->prenom . ' ' . $agent->nom,
-                'email' => $agent->email,
-                'password' => bcrypt($tempPassword),
-                'role' => 'consultant', // rôle par défaut pour les agents
-                'agent_id' => $agent->id,
-            ]);
+            $user = User::firstOrCreate(
+                ['email' => $agent->email],
+                [
+                    'name' => $agent->prenom . ' ' . $agent->nom,
+                    'password' => bcrypt($tempPassword),
+                    'role' => 'consultant',
+                    'agent_id' => $agent->id,
+                ]
+            );
 
-            // Envoyer l'email d'invitation
             try {
                 Mail::to($agent->email)->send(new AgentInvitation($agent, $tempPassword));
             } catch (\Exception $e) {
-                // Log the error but don't fail the creation
-                \Log::error('Failed to send invitation email: ' . $e->getMessage());
+                Log::error('Erreur envoi mail invitation', [
+                    'agent_id' => $agent->id,
+                    'email' => $agent->email,
+                    'error' => $e->getMessage()
+                ]);
             }
         }
 
         $this->closeForm();
 
-        // ← AJOUT : message de succès avec info sur le compte créé
-        if (!$this->agentId) {
+        if (empty($this->agentId)) {
             session()->flash('success',
                 'Agent créé avec succès ! ' .
                 ($agent->email ? 'Un compte utilisateur a été créé avec l\'email : ' . $agent->email : '')
@@ -284,7 +292,10 @@ class DirectoryIndex extends Component
         $this->openDetail($id);
     }
 
-    //  Render
+    // =========================
+    // RENDER
+    // =========================
+
     public function render()
     {
         return view('livewire.annuaire.directory-index', [
@@ -294,6 +305,6 @@ class DirectoryIndex extends Component
             'entityTree' => $this->entityTree,
             'directions' => Entity::where('type','direction')->whereNull('parent_uuid')->orderBy('nom')->get(),
             'services' => Entity::where('type','service')->orderBy('nom')->get(),
-            ]);
+        ]);
     }
 }
