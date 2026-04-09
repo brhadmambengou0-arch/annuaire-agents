@@ -1,59 +1,102 @@
-<x-layouts::auth :title="__('Log in')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Annuaire Institutionnel</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
+        .login-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
 
-        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-header h1 { font-size: 1.4rem; font-weight: 700; color: #0369a1; margin-bottom: 0.3rem; }
+        .login-header p { font-size: 0.85rem; color: #64748b; }
+        .login-divider { width: 40px; height: 3px; background: #0ea5e9; margin: 0.75rem auto 0; border-radius: 2px; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem; }
+        .form-control {
+            width: 100%; padding: 0.65rem 0.9rem;
+            border: 1px solid #e2e8f0; border-radius: 8px;
+            font-size: 0.9rem; color: #334155;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            outline: none;
+        }
+        .form-control:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+        .form-error { font-size: 0.78rem; color: #dc2626; margin-top: 0.3rem; }
+
+        .btn-primary {
+            width: 100%; padding: 0.75rem;
+            background: #0369a1; color: #fff;
+            border: none; border-radius: 8px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #0284c7; }
+
+        .login-footer { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: #94a3b8; }
+        .login-info {
+            background: #f0f9ff; border: 1px solid #bae6fd;
+            border-radius: 8px; padding: 0.9rem; margin-bottom: 1.5rem;
+            font-size: 0.82rem; color: #0369a1;
+        }
+        .login-info strong { display: block; margin-bottom: 0.3rem; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Annuaire Institutionnel</h1>
+            <p>Connectez-vous pour accéder à l'annuaire</p>
+            <div class="login-divider"></div>
+        </div>
+
+        {{-- Comptes de test --}}
+        <div class="login-info">
+            <strong>Comptes de démonstration :</strong>
+            Admin : admin@institution.sn / password<br>
+            Consultant : consultant@institution.sn / password
+        </div>
+
+        <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                :value="old('email')"
-                type="email"
-                required
-                autofocus
-                autocomplete="email"
-                placeholder="email@example.com"
-            />
-
-            <!-- Password -->
-            <div class="relative">
-                <flux:input
-                    name="password"
-                    :label="__('Password')"
-                    type="password"
-                    required
-                    autocomplete="current-password"
-                    :placeholder="__('Password')"
-                    viewable
-                />
-
-                @if (Route::has('password.request'))
-                    <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
-                        {{ __('Forgot your password?') }}
-                    </flux:link>
-                @endif
+            <div class="form-group">
+                <label class="form-label" for="email">Adresse email</label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}"
+                       class="form-control" placeholder="votre@email.sn" required autofocus>
+                @error('email') <p class="form-error">{{ $message }}</p> @enderror
             </div>
 
-            <!-- Remember Me -->
-            <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
-
-            <div class="flex items-center justify-end">
-                <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
-                    {{ __('Log in') }}
-                </flux:button>
+            <div class="form-group">
+                <label class="form-label" for="password">Mot de passe</label>
+                <input id="password" type="password" name="password"
+                       class="form-control" placeholder="••••••••" required>
+                @error('password') <p class="form-error">{{ $message }}</p> @enderror
             </div>
+
+            <button type="submit" class="btn-primary">Se connecter</button>
         </form>
 
-        @if (Route::has('register'))
-            <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600">
-                <span>{{ __('Don\'t have an account?') }}</span>
-                <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
-            </div>
-        @endif
+        <div class="login-footer">
+            Annuaire Numérique des Agents &copy; {{ date('Y') }}
+        </div>
     </div>
-</x-layouts::auth>
+    @livewireScripts
+</body>
+</html>

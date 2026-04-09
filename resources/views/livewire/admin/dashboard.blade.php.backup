@@ -1,0 +1,1059 @@
+{{-- Dashboard Admin --}}
+<x-app-layout>
+<div class="admin-dashboard">
+
+{{-- ══════════════════════════════════════════════════════════════
+     STYLES GLOBAUX
+══════════════════════════════════════════════════════════════ --}}
+@once
+@push('styles')
+<style>
+/* ── Variables ─────────────────────────────────── */
+:root {
+  --sky-50:  #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+  --white:   #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-300:#cbd5e1;
+  --gray-400:#94a3b8;
+  --gray-500:#64748b;
+  --gray-600:#475569;
+  --gray-700:#334155;
+  --success: #059669;
+  --success-bg:#d1fae5;
+  --danger:  #dc2626;
+  --danger-bg:#fee2e2;
+  --warn:    #d97706;
+  --warn-bg: #fef3c7;
+  --radius:  12px;
+  --radius-sm:8px;
+  --shadow:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(2,132,199,.10);
+}
+
+/* ── Reset local ───────────────────────────────── */
+.admin-dashboard * { box-sizing: border-box; }
+.admin-dashboard { font-family: 'DM Sans', 'Inter', sans-serif; background: var(--sky-50); min-height: 100vh; padding: 0; }
+
+/* ── Page header ───────────────────────────────── */
+.admin-header {
+  background: linear-gradient(135deg, var(--sky-700) 0%, var(--sky-500) 100%);
+  padding: 2rem 2rem 3.5rem;
+  position: relative; overflow: hidden;
+}
+.admin-header::before {
+  content:''; position:absolute; right:-60px; top:-60px;
+  width:260px; height:260px; border-radius:50%;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.admin-header::after {
+  content:''; position:absolute; right:60px; top:40px;
+  width:140px; height:140px; border-radius:50%;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.admin-header-inner { position:relative; z-index:1; max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.admin-header h1 { font-size:1.6rem; font-weight:700; color:#fff; margin:0 0 .25rem; letter-spacing:-.02em; }
+.admin-header-sub { font-size:.85rem; color:rgba(255,255,255,.7); }
+
+/* ── Body container ────────────────────────────── */
+.admin-body { max-width:1280px; margin:-1.8rem auto 0; padding:0 1.5rem 3rem; position:relative; z-index:2; }
+
+/* ── Stats row ─────────────────────────────────── */
+.admin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; margin-bottom:2rem; }
+.admin-stat {
+  background:var(--white); border-radius:var(--radius); padding:1.5rem;
+  border:1px solid var(--gray-200); box-shadow:var(--shadow);
+  display:flex; align-items:center; gap:1.25rem;
+  transition: box-shadow .2s;
+}
+.admin-stat:hover { box-shadow:var(--shadow-md); }
+.admin-stat-icon {
+  width:52px; height:52px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+}
+.admin-stat-icon.users  { background:var(--sky-100); }
+.admin-stat-icon.agents { background:#ccfbf1; }
+.admin-stat-icon.entities { background:#fef3c7; }
+.admin-stat-icon.functions { background:#f0fdf4; }
+.admin-stat-content { flex:1; }
+.admin-stat-num  { font-size:2rem; font-weight:700; color:var(--sky-700); line-height:1; margin-bottom:.15rem; }
+.admin-stat-lbl  { font-size:.8rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:.06em; font-weight:500; }
+.admin-stat-desc { font-size:.75rem; color:var(--gray-400); margin-top:.25rem; }
+
+/* ── Content grid ──────────────────────────────── */
+.admin-content { display:grid; grid-template-columns:2fr 1fr; gap:2rem; }
+
+/* ── Recent activity ───────────────────────────── */
+.admin-recent {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:1.5rem; box-shadow:var(--shadow);
+}
+.admin-recent h3 {
+  font-size:1.1rem; font-weight:600; color:var(--sky-800); margin:0 0 1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.admin-recent-list { display:flex; flex-direction:column; gap:.75rem; }
+.admin-recent-item {
+  display:flex; align-items:center; gap:1rem; padding:.75rem;
+  border-radius:8px; background:var(--gray-50); border:1px solid var(--gray-100);
+}
+.admin-recent-avatar {
+  width:36px; height:36px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; font-weight:600; color:#fff;
+}
+.admin-recent-content { flex:1; }
+.admin-recent-name { font-size:.85rem; font-weight:600; color:var(--sky-800); margin-bottom:.1rem; }
+.admin-recent-action { font-size:.75rem; color:var(--gray-500); }
+.admin-recent-time { font-size:.7rem; color:var(--gray-400); }
+
+/* ── Quick actions ─────────────────────────────── */
+.admin-actions {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:1.5rem; box-shadow:var(--shadow);
+}
+.admin-actions h3 {
+  font-size:1.1rem; font-weight:600; color:var(--sky-800); margin:0 0 1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.admin-actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.admin-action-btn {
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+  padding:1.25rem; border-radius:10px; border:1px solid var(--gray-200);
+  background:var(--white); cursor:pointer; transition:all .15s;
+  text-decoration:none; color:var(--gray-700);
+}
+.admin-action-btn:hover {
+  border-color:var(--sky-300); background:var(--sky-50);
+  transform:translateY(-1px); box-shadow:0 4px 12px rgba(2,132,199,.15);
+}
+.admin-action-icon {
+  width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; background:var(--sky-100);
+}
+.admin-action-title { font-size:.8rem; font-weight:600; text-align:center; }
+.admin-action-desc { font-size:.7rem; color:var(--gray-500); text-align:center; }
+
+/* ── System info ───────────────────────────────── */
+.admin-system {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:1.5rem; box-shadow:var(--shadow); margin-top:2rem;
+}
+.admin-system h3 {
+  font-size:1.1rem; font-weight:600; color:var(--sky-800); margin:0 0 1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.admin-system-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.admin-system-item {
+  display:flex; align-items:center; gap:.75rem; padding:.75rem;
+  border-radius:8px; background:var(--gray-50);
+}
+.admin-system-icon {
+  width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-size:.9rem; background:var(--sky-100);
+}
+.admin-system-content { flex:1; }
+.admin-system-label { font-size:.75rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:.05em; }
+.admin-system-value { font-size:.85rem; font-weight:600; color:var(--sky-800); }
+
+/* ── Responsive ─────────────────────────────────── */
+@media(max-width:1024px) {
+  .admin-content { grid-template-columns:1fr; }
+  .admin-stats { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:640px) {
+  .admin-stats { grid-template-columns:1fr; }
+  .admin-actions-grid { grid-template-columns:1fr; }
+  .admin-system-grid { grid-template-columns:1fr; }
+}
+</style>
+@endpush
+@endonce
+
+{{-- ══════════════════════════════════════════════════════════════
+     EN-TÊTE BLEU DÉGRADÉ
+══════════════════════════════════════════════════════════════ --}}
+<div class="admin-header">
+  <div class="admin-header-inner">
+    <div>
+      <h1>Dashboard Administrateur</h1>
+      <div class="admin-header-sub">Bienvenue, {{ auth()->user()->name ?? 'Administrateur' }} — {{ now()->translatedFormat('l d F Y') }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="admin-body">
+
+  {{-- ── Statistiques principales ────────────────── --}}
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <div class="admin-stat-icon users"></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-num">{{ $total_users ?? 0 }}</div>
+        <div class="admin-stat-lbl">Utilisateurs</div>
+        <div class="admin-stat-desc">Comptes utilisateur actifs</div>
+      </div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-icon agents"></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-num">{{ $total_agents ?? 0 }}</div>
+        <div class="admin-stat-lbl">Agents</div>
+        <div class="admin-stat-desc">Employés enregistrés</div>
+      </div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-icon entities"></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-num">{{ $total_entities ?? 0 }}</div>
+        <div class="admin-stat-lbl">Entités</div>
+        <div class="admin-stat-desc">Directions, services, départements</div>
+      </div>
+    </div>
+    <div class="admin-stat">
+      <div class="admin-stat-icon functions"></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-num">{{ $total_fonctions ?? 0 }}</div>
+        <div class="admin-stat-lbl">Fonctions</div>
+        <div class="admin-stat-desc">Postes et rôles définis</div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ── Contenu principal ───────────────────────── --}}
+  <div class="admin-content">
+
+    {{-- Colonne gauche: Activité récente --}}
+    <div>
+
+      {{-- Utilisateurs récents --}}
+      <div class="admin-recent">
+        <h3> Utilisateurs récents</h3>
+        <div class="admin-recent-list">
+          @forelse($recent_users ?? [] as $user)
+            <div class="admin-recent-item">
+              <div class="admin-recent-avatar" style="background: linear-gradient(135deg, var(--sky-500), var(--sky-600))">
+                {{ strtoupper(substr($user->name, 0, 2)) }}
+              </div>
+              <div class="admin-recent-content">
+                <div class="admin-recent-name">{{ $user->name }}</div>
+                <div class="admin-recent-action">A rejoint la plateforme</div>
+                <div class="admin-recent-time">{{ $user->created_at->diffForHumans() }}</div>
+              </div>
+            </div>
+          @empty
+            <div class="admin-recent-item">
+              <div class="admin-recent-content">
+                <div class="admin-recent-name">Aucun utilisateur récent</div>
+                <div class="admin-recent-action">Les nouveaux utilisateurs apparaîtront ici</div>
+              </div>
+            </div>
+          @endforelse
+        </div>
+      </div>
+
+      {{-- Agents récents --}}
+      <div class="admin-recent" style="margin-top: 2rem;">
+        <h3> Agents récents</h3>
+        <div class="admin-recent-list">
+          @forelse($recent_agents ?? [] as $agent)
+            <div class="admin-recent-item">
+              <div class="admin-recent-avatar" style="background: linear-gradient(135deg, #059669, #0d9488)">
+                {{ strtoupper(substr($agent->nom, 0, 1) . substr($agent->prenom, 0, 1)) }}
+              </div>
+              <div class="admin-recent-content">
+                <div class="admin-recent-name">{{ $agent->nom }} {{ $agent->prenom }}</div>
+                <div class="admin-recent-action">Agent ajouté — {{ $agent->fonction->libelle ?? 'Sans fonction' }}</div>
+                <div class="admin-recent-time">{{ $agent->created_at->diffForHumans() }}</div>
+              </div>
+            </div>
+          @empty
+            <div class="admin-recent-item">
+              <div class="admin-recent-content">
+                <div class="admin-recent-name">Aucun agent récent</div>
+                <div class="admin-recent-action">Les nouveaux agents apparaîtront ici</div>
+              </div>
+            </div>
+          @endforelse
+        </div>
+      </div>
+
+    </div>
+
+    {{-- Colonne droite: Actions rapides --}}
+    <div>
+
+      {{-- Actions rapides --}}
+      <div class="admin-actions">
+        <h3> Actions rapides</h3>
+        <div class="admin-actions-grid">
+          <a href="{{ route('admin.entities') }}" class="admin-action-btn">
+            <div class="admin-action-icon"></div>
+            <div class="admin-action-title">Gérer les entités</div>
+            <div class="admin-action-desc">Directions, services, départements</div>
+          </a>
+          <a href="{{ route('admin.fonctions') }}" class="admin-action-btn">
+            <div class="admin-action-icon"></div>
+            <div class="admin-action-title">Gérer les fonctions</div>
+            <div class="admin-action-desc">Postes et niveaux hiérarchiques</div>
+          </a>
+          <a href="{{ route('annuaire.index') }}" class="admin-action-btn">
+            <div class="admin-action-icon"></div>
+            <div class="admin-action-title">Voir l'annuaire</div>
+            <div class="admin-action-desc">Consulter tous les agents</div>
+          </a>
+          <a href="{{ route('profile.edit') }}" class="admin-action-btn">
+            <div class="admin-action-icon"></div>
+            <div class="admin-action-title">Mon profil</div>
+            <div class="admin-action-desc">Gérer mes paramètres</div>
+          </a>
+        </div>
+      </div>
+
+      {{-- Informations système --}}
+      <div class="admin-system">
+        <h3> Informations système</h3>
+        <div class="admin-system-grid">
+          <div class="admin-system-item">
+            <div class="admin-system-icon"></div>
+            <div class="admin-system-content">
+              <div class="admin-system-label">Dernière activité</div>
+              <div class="admin-system-value">{{ now()->format('d/m/Y H:i') }}</div>
+            </div>
+          </div>
+          <div class="admin-system-item">
+            <div class="admin-system-icon"></div>
+            <div class="admin-system-content">
+              <div class="admin-system-label">Version Laravel</div>
+              <div class="admin-system-value">{{ app()->version() }}</div>
+            </div>
+          </div>
+          <div class="admin-system-item">
+            <div class="admin-system-icon"></div>
+            <div class="admin-system-content">
+              <div class="admin-system-label">Base de données</div>
+              <div class="admin-system-value">{{ config('database.default') }}</div>
+            </div>
+          </div>
+          <div class="admin-system-item">
+            <div class="admin-system-icon"></div>
+            <div class="admin-system-content">
+              <div class="admin-system-label">Authentification</div>
+              <div class="admin-system-value">{{ config('auth.defaults.guard') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>{{-- /admin-body --}}
+
+</div>{{-- /admin-dashboard --}}
+</x-app-layout>
+.an-stat-icon.sky   { background:var(--sky-50); border:1px solid var(--sky-200); }
+.an-stat-num  { font-size:1.5rem; font-weight:700; color:var(--sky-700); line-height:1; margin-bottom:.15rem; }
+.an-stat-lbl  { font-size:.75rem; color:var(--gray-400); text-transform:uppercase; letter-spacing:.06em; font-weight:500; }
+
+/* ── Tabs ──────────────────────────────────────── */
+.an-tabs { display:flex; gap:.3rem; margin-bottom:1.25rem; background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius-sm); padding:.3rem; width:fit-content; box-shadow:var(--shadow); }
+.an-tab {
+  padding:.5rem 1.1rem; border-radius:6px; border:none; background:transparent;
+  font-size:.8rem; font-weight:500; font-family:inherit; cursor:pointer;
+  color:var(--gray-500); transition:all .15s; display:flex; align-items:center; gap:.35rem;
+}
+.an-tab.active { background:var(--sky-600); color:#fff; box-shadow:0 2px 6px rgba(2,132,199,.25); }
+.an-tab:not(.active):hover { background:var(--sky-50); color:var(--sky-700); }
+
+/* ── Filters bar ───────────────────────────────── */
+.an-filters {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:.85rem 1.2rem; display:flex; align-items:center; gap:.75rem;
+  flex-wrap:wrap; margin-bottom:1.5rem; box-shadow:var(--shadow);
+}
+.an-filter-label { font-size:.75rem; font-weight:600; color:var(--sky-600); text-transform:uppercase; letter-spacing:.05em; flex-shrink:0; }
+.an-select {
+  padding:.45rem 2rem .45rem .75rem; border:1px solid var(--gray-200); border-radius:var(--radius-sm);
+  font-size:.8rem; font-family:inherit; color:var(--gray-700); background:var(--sky-50);
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right .6rem center;
+  cursor:pointer; outline:none; transition:border-color .15s;
+}
+.an-select:focus { border-color:var(--sky-400); }
+.an-filter-count { margin-left:auto; font-size:.8rem; color:var(--gray-400); flex-shrink:0; }
+.an-filter-reset { font-size:.78rem; color:var(--sky-600); cursor:pointer; text-decoration:underline; flex-shrink:0; }
+.an-filter-reset:hover { color:var(--sky-800); }
+.an-input-search {
+  padding:.45rem .75rem; border:1px solid var(--sky-200); border-radius:var(--radius-sm);
+  font-size:.8rem; font-family:inherit; color:var(--gray-700); background:var(--sky-50);
+  outline:none; transition:border-color .15s; min-width:200px;
+}
+.an-input-search:focus { border-color:var(--sky-400); background:#fff; }
+
+/* ── Agent grid ────────────────────────────────── */
+.an-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1rem; }
+
+.an-card {
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  transition: border-color .15s, box-shadow .15s, transform .12s;
+  position:relative; overflow:hidden;
+}
+.an-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--sky-400), var(--sky-600));
+  opacity:0; transition:opacity .15s;
+}
+.an-card:hover { border-color:var(--sky-300); box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.an-card:hover::before { opacity:1; }
+
+.an-card-top { display:flex; align-items:flex-start; gap:.85rem; margin-bottom:.9rem; }
+.an-avatar {
+  width:46px; height:46px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:700; color:#fff; letter-spacing:.03em;
+}
+.an-card-name { font-size:.9rem; font-weight:700; color:var(--sky-800); margin-bottom:.15rem; line-height:1.2; }
+.an-card-fn   { font-size:.75rem; color:var(--sky-500); font-weight:500; }
+
+.an-card-meta { display:flex; flex-direction:column; gap:.4rem; }
+.an-card-meta-row { display:flex; align-items:center; gap:.5rem; font-size:.775rem; color:var(--gray-500); }
+.an-card-meta-row svg { flex-shrink:0; color:var(--sky-300); }
+
+.an-card-foot {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:.9rem; padding-top:.9rem; border-top:1px solid var(--sky-50);
+}
+.an-badge {
+  display:inline-block; padding:.2rem .65rem; border-radius:20px; font-size:.7rem; font-weight:600;
+}
+.an-badge-entity { background:var(--sky-100); color:var(--sky-700); }
+.an-badge-fn     { background:#f0fdf4; color:#166534; }
+.an-badge-inact  { background:var(--gray-100); color:var(--gray-500); }
+.an-dot { width:7px; height:7px; border-radius:50%; }
+.an-dot-on  { background:var(--success); }
+.an-dot-off { background:var(--gray-300); }
+
+/* ── Empty state ───────────────────────────────── */
+.an-empty { text-align:center; padding:3.5rem 1rem; color:var(--gray-400); grid-column:1/-1; }
+.an-empty-icon { font-size:2.5rem; opacity:.4; margin-bottom:.75rem; }
+
+/* ── Modal ─────────────────────────────────────── */
+.an-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(7,89,133,.35); backdrop-filter:blur(3px);
+  z-index:500; align-items:center; justify-content:center; padding:1rem;
+}
+.an-overlay.open { display:flex; }
+.an-modal {
+  background:var(--white); border-radius:16px; width:100%; max-width:540px;
+  max-height:92vh; overflow-y:auto;
+  animation:anIn .2s ease;
+  box-shadow:0 24px 60px rgba(7,89,133,.18);
+}
+@keyframes anIn { from{opacity:0;transform:translateY(12px) scale(.98)} to{opacity:1;transform:none} }
+.an-modal-head {
+  background:linear-gradient(135deg, var(--sky-700), var(--sky-500));
+  padding:1.5rem; border-radius:16px 16px 0 0;
+  display:flex; align-items:center; gap:1rem; position:relative;
+}
+.an-modal-close {
+  position:absolute; top:1rem; right:1rem;
+  width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.2);
+  border:none; color:#fff; cursor:pointer; font-size:1rem;
+  display:flex; align-items:center; justify-content:center; transition:background .15s;
+}
+.an-modal-close:hover { background:rgba(255,255,255,.35); }
+.an-modal-avatar { width:58px; height:58px; border-radius:14px; border:2px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:700; color:#fff; flex-shrink:0; }
+.an-modal-name { font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:.2rem; }
+.an-modal-fn   { font-size:.8rem; color:rgba(255,255,255,.75); }
+.an-modal-mat  { margin-top:.3rem; font-size:.72rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; background:rgba(255,255,255,.18); padding:.15rem .6rem; border-radius:20px; color:#fff; display:inline-block; }
+.an-modal-body { padding:1.5rem; }
+.an-modal-section-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--sky-400); margin-bottom:.85rem; }
+.an-modal-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+.an-modal-item label { display:block; font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--gray-400); margin-bottom:.2rem; font-weight:600; }
+.an-modal-item .val { font-size:.88rem; font-weight:600; color:var(--gray-700); }
+.an-modal-item .val a { color:var(--sky-600); text-decoration:none; }
+.an-modal-item .val a:hover { text-decoration:underline; }
+.an-modal-divider { height:1px; background:var(--sky-50); margin:1rem 0; }
+
+/* ── Organigramme ──────────────────────────────── */
+.an-tree-wrap { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow); }
+.an-tree-node { margin:.15rem 0; }
+.an-tree-row {
+  display:flex; align-items:center; gap:.6rem; padding:.55rem .75rem;
+  border-radius:var(--radius-sm); cursor:pointer; transition:background .12s;
+}
+.an-tree-row:hover { background:var(--sky-50); }
+.an-tree-toggle { width:16px; height:16px; display:flex; align-items:center; justify-content:center; color:var(--sky-300); font-size:.6rem; flex-shrink:0; transition:transform .18s; }
+.an-tree-toggle.open { transform:rotate(90deg); }
+.an-tree-toggle.leaf { opacity:0; pointer-events:none; }
+.an-tree-icon { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.85rem; flex-shrink:0; }
+.an-tree-icon.dir { background:var(--sky-100); }
+.an-tree-icon.svc { background:#f0fdf4; }
+.an-tree-icon.dep { background:#fef3c7; }
+.an-tree-name { font-size:.83rem; font-weight:600; color:var(--sky-800); flex:1; }
+.an-tree-code { font-size:.72rem; color:var(--gray-400); font-family:monospace; background:var(--gray-100); padding:.1rem .4rem; border-radius:4px; }
+.an-tree-count { font-size:.72rem; color:var(--sky-500); font-weight:600; margin-left:.5rem; }
+.an-tree-children { margin-left:2rem; border-left:1px solid var(--sky-100); padding-left:.75rem; display:none; }
+.an-tree-children.open { display:block; }
+
+/* ── Profil ────────────────────────────────────── */
+.an-profile-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; max-width:500px; box-shadow:var(--shadow); }
+.an-profile-banner { background:linear-gradient(135deg, var(--sky-700), var(--sky-500)); height:80px; position:relative; }
+.an-profile-avatar-wrap { position:absolute; bottom:-28px; left:1.5rem; }
+.an-profile-avatar { width:58px; height:58px; border-radius:14px; border:3px solid #fff; background:var(--sky-600); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:700; color:#fff; box-shadow:var(--shadow-md); }
+.an-profile-body { padding:2.5rem 1.5rem 1.5rem; }
+.an-profile-name { font-size:1.1rem; font-weight:700; color:var(--sky-800); margin-bottom:.2rem; }
+.an-profile-email { font-size:.8rem; color:var(--gray-400); margin-bottom:.75rem; }
+.an-profile-role { display:inline-block; padding:.2rem .7rem; border-radius:20px; font-size:.7rem; font-weight:600; background:var(--sky-100); color:var(--sky-700); text-transform:uppercase; letter-spacing:.06em; }
+.an-profile-divider { height:1px; background:var(--sky-50); margin:1.2rem 0; }
+.an-profile-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+.an-profile-field label { font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--gray-400); font-weight:600; display:block; margin-bottom:.2rem; }
+.an-profile-field .val { font-size:.85rem; font-weight:600; color:var(--gray-700); }
+
+/* ── View switcher (grille/liste) ──────────────── */
+.an-view-btns { display:flex; gap:.25rem; }
+.an-view-btn { width:32px; height:32px; border-radius:6px; border:1px solid var(--gray-200); background:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-400); transition:all .15s; }
+.an-view-btn.active, .an-view-btn:hover { background:var(--sky-100); border-color:var(--sky-300); color:var(--sky-600); }
+
+/* ── List view ─────────────────────────────────── */
+.an-list { display:none; background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.an-list.active { display:block; }
+.an-list-head { display:grid; grid-template-columns:2fr 1.5fr 1.5fr 1fr 80px; padding:.6rem 1rem; background:var(--sky-50); border-bottom:1px solid var(--sky-100); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--sky-600); gap:.5rem; }
+.an-list-row { display:grid; grid-template-columns:2fr 1.5fr 1.5fr 1fr 80px; padding:.85rem 1rem; border-bottom:1px solid var(--sky-50); align-items:center; gap:.5rem; cursor:pointer; transition:background .12s; }
+.an-list-row:last-child { border-bottom:none; }
+.an-list-row:hover { background:var(--sky-50); }
+.an-list-name { display:flex; align-items:center; gap:.6rem; }
+.an-list-av { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; color:#fff; flex-shrink:0; }
+
+/* ── Responsive ─────────────────────────────────── */
+@media(max-width:900px) {
+  .an-stats { grid-template-columns:1fr 1fr; }
+  .an-list-head, .an-list-row { grid-template-columns:1.5fr 1fr 80px; }
+  .an-list-head > *:nth-child(2),
+  .an-list-row  > *:nth-child(2),
+  .an-list-head > *:nth-child(3),
+  .an-list-row  > *:nth-child(3) { display:none; }
+  .an-header-search { min-width:200px; }
+}
+@media(max-width:600px) {
+  .an-stats { grid-template-columns:1fr; }
+  .an-body { padding:0 1rem 2rem; }
+  .an-header { padding:1.5rem 1rem 3rem; }
+  .an-modal-row { grid-template-columns:1fr; }
+  .an-profile-row { grid-template-columns:1fr; }
+}
+</style>
+@endpush
+@endonce
+
+{{-- ══════════════════════════════════════════════════════════════
+     EN-TÊTE BLEU DÉGRADÉ
+══════════════════════════════════════════════════════════════ --}}
+<div class="an-header">
+  <div class="an-header-inner">
+    <div>
+      <h1> Annuaire des agents</h1>
+      <div class="an-header-sub">Bienvenue, {{ auth()->user()->name ?? 'Utilisateur' }} — {{ now()->translatedFormat('l d F Y') }}</div>
+    </div>
+    <div class="an-header-search" id="globalSearchWrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="globalSearch" placeholder="Rechercher un agent..." autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div class="an-body">
+
+  {{-- ── Statistiques ───────────────────────────── --}}
+  <div class="an-stats" id="statsRow">
+    <div class="an-stat">
+      <div class="an-stat-icon blue"></div>
+      <div><div class="an-stat-num" id="statActifs">--</div><div class="an-stat-lbl">Agents actifs</div></div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-icon teal"></div>
+      <div><div class="an-stat-num" id="statDirs">--</div><div class="an-stat-lbl">Directions</div></div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-icon amber">*</div>
+      <div><div class="an-stat-num" id="statFns">--</div><div class="an-stat-lbl">Fonctions</div></div>
+    </div>
+    <div class="an-stat">
+      <div class="an-stat-icon sky"></div>
+      <div><div class="an-stat-num" id="statResults">--</div><div class="an-stat-lbl">Résultats</div></div>
+    </div>
+  </div>
+
+  {{-- ── Onglets ────────────────────────────────── --}}
+  <div class="an-tabs">
+    <button class="an-tab active" onclick="switchTab('annuaire',this)" id="tabAnnuaire">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Annuaire
+    </button>
+    <button class="an-tab" onclick="switchTab('orgchart',this)" id="tabOrg">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="6" height="4" rx="1"/><rect x="9" y="10" width="6" height="4" rx="1"/><path d="M6 7v3h6"/></svg>
+      Organigramme
+    </button>
+    <button class="an-tab" onclick="switchTab('profile',this)" id="tabProfile">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Mon profil
+    </button>
+  </div>
+
+  {{-- ══════════════════════════════════════
+       TAB : ANNUAIRE
+  ══════════════════════════════════════ --}}
+  <div id="tab-annuaire">
+
+    {{-- Filtres --}}
+    <div class="an-filters">
+      <span class="an-filter-label">Filtres</span>
+
+      <select class="an-select" id="filterDir" onchange="applyFilters()">
+        <option value="">Toutes les directions</option>
+        @foreach($directions ?? [] as $dir)
+          <option value="{{ $dir->id }}">{{ $dir->nom }}</option>
+        @endforeach
+      </select>
+
+      <select class="an-select" id="filterFn" onchange="applyFilters()">
+        <option value="">Toutes les fonctions</option>
+        @foreach($fonctions ?? [] as $fn)
+          <option value="{{ $fn->id }}">{{ $fn->libelle }}</option>
+        @endforeach
+      </select>
+
+      <select class="an-select" id="filterNiv" onchange="applyFilters()">
+        <option value="">Tous les niveaux</option>
+        <option value="1">Niveau 1 — Agent</option>
+        <option value="2">Niveau 2 — Technicien</option>
+        <option value="3">Niveau 3 — Cadre</option>
+        <option value="4">Niveau 4 — Conseiller</option>
+        <option value="5">Niveau 5 — Directeur</option>
+        <option value="6">Niveau 6 — DG</option>
+      </select>
+
+      <input type="text" class="an-input-search" id="inlineSearch" placeholder="Nom, email, matricule..." oninput="applyFilters()">
+
+      <span class="an-filter-count" id="filterCount"></span>
+      <span class="an-filter-reset" onclick="resetFilters()">✕ Réinitialiser</span>
+
+      <div class="an-view-btns" style="margin-left:.5rem">
+        <button class="an-view-btn active" id="btnGrid" onclick="setView('grid')" title="Grille">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="an-view-btn" id="btnList" onclick="setView('list')" title="Liste">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    {{-- Grille --}}
+    <div class="an-grid" id="agentGrid"></div>
+
+    {{-- Liste (vue alternative) --}}
+    <div class="an-list" id="agentList">
+      <div class="an-list-head">
+        <div>Agent</div><div>Direction</div><div>Fonction</div><div>Téléphone</div><div>Statut</div>
+      </div>
+      <div id="agentListBody"></div>
+    </div>
+  </div>
+
+  {{-- ══════════════════════════════════════
+       TAB : ORGANIGRAMME
+  ══════════════════════════════════════ --}}
+  <div id="tab-orgchart" style="display:none">
+    <div class="an-tree-wrap" id="orgTree"></div>
+  </div>
+
+  {{-- ══════════════════════════════════════
+       TAB : PROFIL
+  ══════════════════════════════════════ --}}
+  <div id="tab-profile" style="display:none">
+    <div class="an-profile-card">
+      <div class="an-profile-banner"></div>
+      <div class="an-profile-avatar-wrap">
+        <div class="an-profile-avatar" id="profileAvatar">??</div>
+      </div>
+      <div class="an-profile-body">
+        <div class="an-profile-name" id="profileName">{{ auth()->user()->name ?? '' }}</div>
+        <div class="an-profile-email">{{ auth()->user()->email ?? '' }}</div>
+        <span class="an-profile-role">Consultant</span>
+        <div class="an-profile-divider"></div>
+        <div class="an-profile-row">
+          <div class="an-profile-field"><label>UUID</label><div class="val" style="font-size:.72rem;font-family:monospace;word-break:break-all">{{ auth()->user()->uuid ?? '—' }}</div></div>
+          <div class="an-profile-field"><label>Inscrit le</label><div class="val">{{ auth()->user()->created_at?->format('d/m/Y') ?? '—' }}</div></div>
+        </div>
+        <div class="an-profile-row">
+          <div class="an-profile-field"><label>Rôle</label><div class="val">{{ ucfirst(auth()->user()->role ?? 'consultant') }}</div></div>
+          <div class="an-profile-field"><label>Dernière connexion</label><div class="val">{{ now()->format('d/m/Y H:i') }}</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>{{-- /an-body --}}
+
+{{-- ══════════════════════════════════════════════════════════════
+     MODAL FICHE AGENT
+══════════════════════════════════════════════════════════════ --}}
+<div class="an-overlay" id="agentModal">
+  <div class="an-modal">
+    <div class="an-modal-head">
+      <div class="an-modal-avatar" id="mAvatar">??</div>
+      <div>
+        <div class="an-modal-name" id="mName">—</div>
+        <div class="an-modal-fn"   id="mFn">—</div>
+        <span class="an-modal-mat" id="mMat">—</span>
+      </div>
+      <button class="an-modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="an-modal-body">
+      <div class="an-modal-section-title"> Coordonnées</div>
+      <div class="an-modal-row">
+        <div class="an-modal-item"><label>Email</label><div class="val" id="mEmail">—</div></div>
+        <div class="an-modal-item"><label>Téléphone</label><div class="val" id="mTel">—</div></div>
+      </div>
+      <div class="an-modal-row">
+        <div class="an-modal-item"><label>Tél. interne</label><div class="val" id="mTelInt">—</div></div>
+        <div class="an-modal-item"><label>Bureau</label><div class="val" id="mBureau">—</div></div>
+      </div>
+      <div class="an-modal-divider"></div>
+      <div class="an-modal-section-title"> Affectation</div>
+      <div class="an-modal-row">
+        <div class="an-modal-item"><label>Structure</label><div class="val" id="mEntity">—</div></div>
+        <div class="an-modal-item"><label>Direction</label><div class="val" id="mDir">—</div></div>
+      </div>
+      <div class="an-modal-row">
+        <div class="an-modal-item"><label>Fonction</label><div class="val" id="mFonction">—</div></div>
+        <div class="an-modal-item"><label>Niveau</label><div class="val" id="mNiveau">—</div></div>
+      </div>
+      <div class="an-modal-row">
+        <div class="an-modal-item"><label>Prise de fonction</label><div class="val" id="mDate">—</div></div>
+        <div class="an-modal-item"><label>Statut</label><div class="val" id="mStatut">—</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{-- ══════════════════════════════════════════════════════════════
+     DONNÉES JSON (passées depuis le contrôleur)
+     + JAVASCRIPT RÉACTIF
+══════════════════════════════════════════════════════════════ --}}
+@once
+@push('scripts')
+<script>
+/* ── Données injectées depuis Laravel ─────────────────────────
+   Remplacez les arrays JS ci-dessous par les variables Blade :
+   const AGENTS = @json($agents->map(fn($a) => [...]) ?? []);
+   Ici on garde des données de démo complètes pour la maquette.
+──────────────────────────────────────────────────────────────*/
+const AGENTS = @json(isset($agents) ? $agents->map(function($a){
+  return [
+    'id'       => $a->id,
+    'nom'      => $a->nom,
+    'prenom'   => $a->prenom,
+    'mat'      => $a->matricule,
+    'email'    => $a->email ?? '',
+    'tel'      => $a->telephone ?? '',
+    'tel_int'  => $a->telephone_interne ?? '',
+    'bureau'   => $a->bureau ?? '',
+    'dir_id'   => $a->entity->parent_id ?? $a->entity_id,
+    'dir_nom'  => optional(optional($a->entity)->parent ?? $a->entity)->nom ?? '',
+    'entity_nom'=> optional($a->entity)->nom ?? '',
+    'fn_id'    => $a->fonction_id,
+    'fn_lib'   => optional($a->fonction)->libelle ?? '',
+    'fn_niv'   => optional($a->fonction)->niveau ?? 1,
+    'date'     => optional($a->date_prise_fonction)->format('d/m/Y') ?? '',
+    'active'   => $a->is_active,
+    'init'     => mb_strtoupper(mb_substr($a->prenom,0,1).mb_substr($a->nom,0,1)),
+    'color'    => ['#0284c7','#0369a1','#0ea5e9','#38bdf8','#0891b2','#0e7490'][crc32($a->nom)%6],
+  ];
+}) : collect() );
+
+/* ── Données de démo (utilisées si $agents non défini) ──────── */
+const DEMO = [
+  {id:1,nom:'SOW',prenom:'Ibrahima',mat:'MAT001',email:'i.sow@institution.sn',tel:'+221 77 100 00 01',tel_int:'201',bureau:'A-201',dir_id:1,dir_nom:'DRH',entity_nom:'Service Recrutement',fn_id:8,fn_lib:'Chef de Service',fn_niv:3,date:'10/06/2019',active:true,init:'IS',color:'#0284c7'},
+  {id:2,nom:'DIALLO',prenom:'Fatoumata',mat:'MAT002',email:'f.diallo@institution.sn',tel:'+221 77 100 00 02',tel_int:'202',bureau:'A-105',dir_id:1,dir_nom:'DRH',entity_nom:'DRH',fn_id:7,fn_lib:"Chargée d'Études",fn_niv:3,date:'15/03/2020',active:true,init:'FD',color:'#0369a1'},
+  {id:3,nom:'NDIAYE',prenom:'Omar',mat:'MAT003',email:'o.ndiaye@institution.sn',tel:'+221 77 100 00 03',tel_int:'301',bureau:'B-301',dir_id:2,dir_nom:'DAF',entity_nom:'Service Comptabilité',fn_id:5,fn_lib:'Comptable',fn_niv:2,date:'20/01/2018',active:true,init:'ON',color:'#0ea5e9'},
+  {id:4,nom:'BA',prenom:'Aminata',mat:'MAT004',email:'a.ba@institution.sn',tel:'+221 77 100 00 04',tel_int:'210',bureau:'B-210',dir_id:2,dir_nom:'DAF',entity_nom:'DAF',fn_id:11,fn_lib:'Directrice',fn_niv:5,date:'01/09/2015',active:true,init:'AB',color:'#0891b2'},
+  {id:5,nom:'FALL',prenom:'Moussa',mat:'MAT005',email:'m.fall@institution.sn',tel:'+221 77 100 00 05',tel_int:'401',bureau:'C-401',dir_id:3,dir_nom:'DSI',entity_nom:'Service Dev',fn_id:4,fn_lib:'Informaticien',fn_niv:2,date:'12/07/2021',active:true,init:'MF',color:'#38bdf8'},
+  {id:6,nom:'SARR',prenom:'Aissatou',mat:'MAT006',email:'a.sarr@institution.sn',tel:'+221 77 100 00 06',tel_int:'402',bureau:'C-402',dir_id:3,dir_nom:'DSI',entity_nom:'Service Infrastructure',fn_id:8,fn_lib:'Chef de Service',fn_niv:3,date:'03/04/2017',active:true,init:'AS',color:'#0e7490'},
+  {id:7,nom:'THIAM',prenom:'Cheikh',mat:'MAT007',email:'c.thiam@institution.sn',tel:'+221 77 100 00 07',tel_int:'101',bureau:'D-101',dir_id:4,dir_nom:'DJ',entity_nom:'Service Contentieux',fn_id:9,fn_lib:'Juriste',fn_niv:3,date:'05/01/2022',active:true,init:'CT',color:'#0284c7'},
+  {id:8,nom:'MBAYE',prenom:'Rokhaya',mat:'MAT008',email:'r.mbaye@institution.sn',tel:'+221 77 100 00 08',tel_int:'102',bureau:'D-102',dir_id:4,dir_nom:'DJ',entity_nom:'DJ',fn_id:10,fn_lib:'Conseillère',fn_niv:4,date:'28/11/2016',active:true,init:'RM',color:'#0369a1'},
+  {id:9,nom:'DIOUF',prenom:'Lamine',mat:'MAT009',email:'l.diouf@institution.sn',tel:'+221 77 100 00 09',tel_int:'201',bureau:'E-201',dir_id:5,dir_nom:'DC',entity_nom:'Service Presse',fn_id:6,fn_lib:'Chargé de Communication',fn_niv:2,date:'14/02/2023',active:true,init:'LD',color:'#0ea5e9'},
+  {id:10,nom:'CISSE',prenom:'Ndèye',mat:'MAT010',email:'n.cisse@institution.sn',tel:'+221 77 100 00 10',tel_int:'203',bureau:'E-203',dir_id:5,dir_nom:'DC',entity_nom:'DC',fn_id:2,fn_lib:'Secrétaire',fn_niv:1,date:'21/08/2019',active:true,init:'NC',color:'#0891b2'},
+  {id:11,nom:'TOURE',prenom:'Boubacar',mat:'MAT011',email:'b.toure@institution.sn',tel:'+221 77 100 00 11',tel_int:'103',bureau:'A-102',dir_id:1,dir_nom:'DRH',entity_nom:'DRH',fn_id:1,fn_lib:'Agent',fn_niv:1,date:'10/01/2024',active:true,init:'BT',color:'#38bdf8'},
+  {id:12,nom:'GUEYE',prenom:'Mariama',mat:'MAT012',email:'m.gueye@institution.sn',tel:'+221 77 100 00 12',tel_int:'001',bureau:'F-101',dir_id:6,dir_nom:'DG',entity_nom:'Direction Générale',fn_id:13,fn_lib:'Directrice Générale',fn_niv:6,date:'15/05/2013',active:true,init:'MG',color:'#0e7490'},
+  {id:13,nom:'WADE',prenom:'Seydou',mat:'MAT013',email:'s.wade@institution.sn',tel:'+221 77 100 00 13',tel_int:'315',bureau:'B-315',dir_id:2,dir_nom:'DAF',entity_nom:'Service Budget',fn_id:3,fn_lib:'Agent Principal',fn_niv:2,date:'30/09/2020',active:true,init:'SW',color:'#0284c7'},
+  {id:14,nom:'KAMARA',prenom:'Binta',mat:'MAT014',email:'b.kamara@institution.sn',tel:'+221 77 100 00 14',tel_int:'403',bureau:'C-403',dir_id:3,dir_nom:'DSI',entity_nom:'Service Dev',fn_id:4,fn_lib:'Informaticienne',fn_niv:2,date:'01/11/2021',active:false,init:'BK',color:'#94a3b8'},
+  {id:15,nom:'FAYE',prenom:'Abdou',mat:'MAT015',email:'a.faye@institution.sn',tel:'+221 77 100 00 15',tel_int:'202',bureau:'E-202',dir_id:5,dir_nom:'DC',entity_nom:'DC',fn_id:11,fn_lib:'Directeur',fn_niv:5,date:'08/03/2014',active:true,init:'AF',color:'#0369a1'},
+];
+
+const DATA = (AGENTS && AGENTS.length > 0) ? AGENTS : DEMO;
+
+const ORG = [
+  {id:1,nom:'Direction Générale',code:'DG',type:'direction',agents:1,children:[
+    {id:2,nom:'Secrétariat Général',code:'DG-SG',type:'service',agents:0,children:[]}
+  ]},
+  {id:3,nom:'Direction des Ressources Humaines',code:'DRH',type:'direction',agents:3,children:[
+    {id:4,nom:'Service Recrutement et Mobilité',code:'DRH-SRM',type:'service',agents:1,children:[
+      {id:5,nom:'Département Gestion des Carrières',code:'DRH-SRM-DGC',type:'departement',agents:0,children:[]},
+      {id:6,nom:'Département Relations Sociales',code:'DRH-SRM-DRS',type:'departement',agents:0,children:[]},
+    ]},
+    {id:7,nom:'Service Formation et Compétences',code:'DRH-SFC',type:'service',agents:0,children:[]},
+  ]},
+  {id:8,nom:'Direction des Affaires Financières',code:'DAF',type:'direction',agents:3,children:[
+    {id:9,nom:'Service Comptabilité',code:'DAF-CPT',type:'service',agents:1,children:[]},
+    {id:10,nom:'Service Budget',code:'DAF-BDG',type:'service',agents:1,children:[]},
+  ]},
+  {id:11,nom:"Direction des Systèmes d'Information",code:'DSI',type:'direction',agents:3,children:[
+    {id:12,nom:'Service Développement',code:'DSI-DEV',type:'service',agents:2,children:[]},
+    {id:13,nom:'Service Infrastructure',code:'DSI-INF',type:'service',agents:1,children:[]},
+  ]},
+  {id:14,nom:'Direction Juridique',code:'DJ',type:'direction',agents:2,children:[
+    {id:15,nom:'Service Contentieux',code:'DJ-CNT',type:'service',agents:1,children:[]},
+  ]},
+  {id:16,nom:'Direction de la Communication',code:'DC',type:'direction',agents:3,children:[
+    {id:17,nom:'Service Relations Presse',code:'DC-RP',type:'service',agents:1,children:[]},
+  ]},
+];
+
+/* ── État ─────────────────────────────────────── */
+let state = { search:'', dir:'', fn:'', niv:'', view:'grid' };
+let filtered = [...DATA];
+
+/* ── Utilitaires ──────────────────────────────── */
+const niv_label = {1:'Agent',2:'Technicien',3:'Cadre',4:'Conseiller',5:'Directeur',6:'DG'};
+const $  = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+function initials(str){ return str ? str.substring(0,2).toUpperCase() : '??'; }
+
+/* ── Filtrage ─────────────────────────────────── */
+function applyFilters(){
+  state.search = ($('globalSearch').value || $('inlineSearch').value || '').toLowerCase().trim();
+  state.dir    = $('filterDir').value;
+  state.fn     = $('filterFn').value;
+  state.niv    = $('filterNiv').value;
+
+  filtered = DATA.filter(a => {
+    if(!a.active) return false;
+    const q = state.search;
+    if(q && !`${a.nom} ${a.prenom} ${a.email} ${a.mat}`.toLowerCase().includes(q)) return false;
+    if(state.dir && String(a.dir_id) !== state.dir) return false;
+    if(state.fn  && String(a.fn_id)  !== state.fn)  return false;
+    if(state.niv && String(a.fn_niv) !== state.niv) return false;
+    return true;
+  });
+
+  $('statResults').textContent = filtered.length;
+  $('filterCount').textContent = `${filtered.length} / ${DATA.filter(a=>a.active).length} agents`;
+  renderGrid();
+  renderList();
+}
+
+function resetFilters(){
+  ['filterDir','filterFn','filterNiv'].forEach(id=>$(id).value='');
+  $('inlineSearch').value='';
+  $('globalSearch').value='';
+  applyFilters();
+}
+
+/* ── Rendu grille ─────────────────────────────── */
+function renderGrid(){
+  const wrap = $('agentGrid');
+  if(!filtered.length){
+    wrap.innerHTML=`<div class="an-empty"><div class="an-empty-icon">🔍</div><div>Aucun agent ne correspond aux critères</div></div>`;
+    return;
+  }
+  wrap.innerHTML = filtered.map(a=>`
+    <div class="an-card" onclick="openModal(${a.id})">
+      <div class="an-card-top">
+        <div class="an-avatar" style="background:${a.color}">${a.init}</div>
+        <div>
+          <div class="an-card-name">${a.nom} ${a.prenom}</div>
+          <div class="an-card-fn">${a.fn_lib}</div>
+        </div>
+      </div>
+      <div class="an-card-meta">
+        <div class="an-card-meta-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.69 12a19.79 19.79 0 01-3.07-8.67A2 2 0 013.6 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.6a16 16 0 006 6l.96-.96a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          ${a.tel || '—'}
+        </div>
+        <div class="an-card-meta-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          ${a.email || '—'}
+        </div>
+        <div class="an-card-meta-row">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Bureau ${a.bureau || '—'}
+        </div>
+      </div>
+      <div class="an-card-foot">
+        <span class="an-badge an-badge-entity">${a.dir_nom}</span>
+        <span class="an-badge an-badge-fn" style="font-size:.68rem">Niv.${a.fn_niv}</span>
+        <div class="an-dot ${a.active?'an-dot-on':'an-dot-off'}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Rendu liste ──────────────────────────────── */
+function renderList(){
+  $('agentListBody').innerHTML = filtered.map(a=>`
+    <div class="an-list-row" onclick="openModal(${a.id})">
+      <div class="an-list-name">
+        <div class="an-list-av" style="background:${a.color}">${a.init}</div>
+        <div>
+          <div style="font-weight:600;font-size:.82rem;color:#075985">${a.nom} ${a.prenom}</div>
+          <div style="font-size:.72rem;color:#94a3b8">${a.mat}</div>
+        </div>
+      </div>
+      <div><span class="an-badge an-badge-entity">${a.dir_nom}</span></div>
+      <div style="font-size:.8rem;color:#475569">${a.fn_lib}</div>
+      <div style="font-size:.8rem;color:#475569">${a.tel||'—'}</div>
+      <div><span class="an-badge ${a.active?'an-badge-fn':'an-badge-inact'}">${a.active?'Actif':'Inactif'}</span></div>
+    </div>
+  `).join('');
+}
+
+/* ── Vue grille / liste ───────────────────────── */
+function setView(v){
+  state.view = v;
+  if(v==='grid'){
+    $('agentGrid').style.display='grid';
+    $('agentList').classList.remove('active');
+    $('btnGrid').classList.add('active'); $('btnList').classList.remove('active');
+  } else {
+    $('agentGrid').style.display='none';
+    $('agentList').classList.add('active');
+    $('btnGrid').classList.remove('active'); $('btnList').classList.add('active');
+  }
+}
+
+/* ── Tabs ─────────────────────────────────────── */
+function switchTab(name, btn){
+  ['annuaire','orgchart','profile'].forEach(t=>{
+    const el = $('tab-'+t);
+    if(el) el.style.display = (t===name)?'block':'none';
+  });
+  $$('.an-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Modal fiche ──────────────────────────────── */
+function openModal(id){
+  const a = DATA.find(x=>x.id===id);
+  if(!a) return;
+  $('mAvatar').textContent = a.init;
+  $('mAvatar').style.background = a.color;
+  $('mName').textContent    = `${a.nom} ${a.prenom}`;
+  $('mFn').textContent      = `${a.fn_lib} — Niveau ${a.fn_niv} (${niv_label[a.fn_niv]||''})`;
+  $('mMat').textContent     = a.mat;
+  $('mEmail').innerHTML     = a.email ? `<a href="mailto:${a.email}">${a.email}</a>` : '—';
+  $('mTel').innerHTML       = a.tel   ? `<a href="tel:${a.tel}">${a.tel}</a>` : '—';
+  $('mTelInt').textContent  = a.tel_int || '—';
+  $('mBureau').textContent  = a.bureau  || '—';
+  $('mEntity').textContent  = a.entity_nom || '—';
+  $('mDir').textContent     = a.dir_nom    || '—';
+  $('mFonction').textContent= a.fn_lib;
+  $('mNiveau').textContent  = `Niveau ${a.fn_niv} — ${niv_label[a.fn_niv]||''}`;
+  $('mDate').textContent    = a.date || '—';
+  $('mStatut').innerHTML    = `<span class="an-badge ${a.active?'an-badge-fn':'an-badge-inact'}">${a.active?'✓ Actif':'✗ Inactif'}</span>`;
+  $('agentModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  $('agentModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+$('agentModal').addEventListener('click', e=>{ if(e.target===$('agentModal')) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ── Organigramme ─────────────────────────────── */
+function buildTree(nodes){
+  const ico = {direction:,service:,departement:};
+  const cls = {direction:'dir',service:'svc',departement:'dep'};
+  function node(n){
+    const has = n.children && n.children.length;
+    return `<div class="an-tree-node">
+      <div class="an-tree-row" onclick="toggleNode(this)">
+        <span class="an-tree-toggle ${has?'':'leaf'}"></span>
+        <span class="an-tree-icon ${cls[n.type]}">${ico[n.type]}</span>
+        <span class="an-tree-name">${n.nom}</span>
+        <span class="an-tree-code">${n.code}</span>
+        ${n.type==='direction'&&n.agents?`<span class="an-tree-count">${n.agents} agents</span>`:''}
+      </div>
+      ${has?`<div class="an-tree-children">${n.children.map(node).join('')}</div>`:''}
+    </div>`;
+  }
+  return nodes.map(node).join('');
+}
+function toggleNode(row){
+  const toggle = row.querySelector('.an-tree-toggle');
+  const kids   = row.nextElementSibling;
+  if(!kids||!kids.classList.contains('an-tree-children')) return;
+  toggle.classList.toggle('open');
+  kids.classList.toggle('open');
+}
+
+/* ── Profil ───────────────────────────────────── */
+function initProfile(){
+  const name = document.querySelector('.an-profile-name')?.textContent || '';
+  const init = name.split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase() || 'ME';
+  const av = $('profileAvatar');
+  if(av) av.textContent = init;
+}
+
+/* ── Statistiques ─────────────────────────────── */
+function initStats(){
+  const actifs = DATA.filter(a=>a.active).length;
+  const dirs   = [...new Set(DATA.map(a=>a.dir_nom))].length;
+  const fns    = [...new Set(DATA.map(a=>a.fn_lib))].length;
+  $('statActifs').textContent  = actifs;
+  $('statDirs').textContent    = dirs;
+  $('statFns').textContent     = fns;
+  $('statResults').textContent = actifs;
+  $('filterCount').textContent = `${actifs} / ${actifs} agents`;
+}
+
+/* ── Sync recherche header + inline ──────────────*/
+$('globalSearch').addEventListener('input', function(){
+  $('inlineSearch').value = this.value;
+  applyFilters();
+});
+$('inlineSearch').addEventListener('input', function(){
+  $('globalSearch').value = this.value;
+  applyFilters();
+});
+
+/* ── Init ─────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  initStats();
+  applyFilters();
+  $('orgTree').innerHTML = buildTree(ORG);
+  initProfile();
+});
+</script>
+@endpush
+@endonce
+
+</div>{{-- /annuaire-wrap --}}
+</x-app-layout>

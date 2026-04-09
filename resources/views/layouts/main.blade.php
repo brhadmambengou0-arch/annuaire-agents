@@ -91,7 +91,7 @@
                    class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm mb-0.5"
                    style="color:#3a6a8a;{{ request()->routeIs('annuaire.index') && !request()->entity_id ? 'background:#e8f4fd;color:#0d4f7c;font-weight:500;' : '' }}">
                     <svg class="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                    Toutes les directions
+                    Toutes les direction
                 </a>
                 @foreach(\App\Models\Entity::roots()->with('childrenRecursive')->get() as $direction)
                     <div x-data="{ open: false }">
@@ -116,6 +116,12 @@
                 @endforeach
                 @if(auth()->user()->role === 'admin')
                     <div class="text-xs font-semibold uppercase tracking-widest px-2 mt-3 mb-1" style="color:#7aaecc;padding-top:10px;border-top:0.5px solid #e0eff8;">Administration</div>
+                    <a href="{{ route('annuaire.index') }}"
+                       class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm mb-0.5"
+                       style="color:#3a6a8a;{{ request()->routeIs('annuaire.index') && request()->routeIs('annuaire.index') ? 'background:#e8f4fd;color:#0d4f7c;' : '' }}">
+                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.75 1.75 0 0 0 18.3 7.13L16.5 12H14v6h-2V4c0-.55-.45-1-1-1H6c-.55 0-1 .45-1 1v16H2c-.55 0-1 .45-1 1s.45 1 1 1h6c.55 0 1-.45 1-1v-7h2v7c0 .55.45 1 1 1h6c.55 0 1-.45 1-1z"/></svg>
+                        Gérer les agents
+                    </a>
                     <a href="{{ route('admin.entities') }}"
                        class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm mb-0.5"
                        style="color:#3a6a8a;{{ request()->routeIs('admin.entities') ? 'background:#e8f4fd;color:#0d4f7c;' : '' }}">

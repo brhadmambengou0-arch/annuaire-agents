@@ -12,7 +12,6 @@
             <input type="password" name="password" required>
         </div>
         <button type="submit">Se connecter</button>
-        <a href="{{ route('register') }}">Pas encore inscrit ?</a>
     </form>
 </div>
 @endsection
