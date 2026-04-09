@@ -8,6 +8,9 @@ use App\Livewire\Annuaire\AgentIndex;
 use App\Livewire\Admin\EntityManager;
 use App\Livewire\Admin\FonctionManager;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\AgentManager;
+use App\Livewire\Admin\EntityHierarchyManager;
+use App\Livewire\AgentProfile;
 use App\Models\User;
 use App\Models\Agent;
 use App\Models\Entity;
@@ -33,6 +36,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile',[ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Profil agent
+    Route::get('/mon-profil', AgentProfile::class)->name('agent.profile');
 
     // Annuaire
     Route::get('/annuaire', DirectoryIndex::class)->name('annuaire.index');
@@ -72,7 +78,8 @@ Route::middleware('auth')->group(function () {
     // Admin
     Route::middleware([\App\Http\Middleware\AdminOnly::class])->group(function () {
         Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
-        Route::get('/admin/entites',   EntityManager::class)->name('admin.entities');
+        Route::get('/admin/agents', AgentManager::class)->name('admin.agents');
+        Route::get('/admin/entites', EntityHierarchyManager::class)->name('admin.entities');
         Route::get('/admin/fonctions', FonctionManager::class)->name('admin.fonctions');
     });
 

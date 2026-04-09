@@ -9,6 +9,7 @@
                 </div>
                 <div style="display: flex; gap: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 1rem; flex: 1; min-width: 300px;">
+                        <span style="color: #94a3b8; font-size: 1.2rem;">🔍</span>
                         <input wire:model.live="search" type="text" placeholder="Rechercher un agent..." style="border: none; outline: none; flex: 1; font-size: 0.9rem; background: transparent;" />
                     </div>
                 </div>
@@ -21,10 +22,7 @@
                     <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0 0 1.5rem 0; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">Filtres</h3>
 
                     <!-- Filter by Direction -->
-                    @php 
-                        $direction_entities = $allEntities->whereNull('parent_uuid');
-                    @endphp
-                    @if($direction_entities->count() > 0)
+                    @if($entityTree->count() > 0)
                         <div style="margin-bottom: 1.5rem;">
                             <label style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 0.75rem;">Direction</label>
                             <div style="display: flex; flex-direction: column; gap: 0.3rem;">
@@ -32,7 +30,7 @@
                                     <input wire:model.live="directionId" type="radio" value="" style="cursor: pointer;" />
                                     <span style="font-size: 0.9rem; color: #475569;">Toutes</span>
                                 </label>
-                                @foreach($direction_entities as $direction)
+                                @foreach($entityTree as $direction)
                                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;">
                                         <input wire:model.live="directionId" type="radio" value="{{ $direction->id }}" style="cursor: pointer;" />
                                         <span style="font-size: 0.9rem; color: #475569;">{{ $direction->nom }}</span>
@@ -63,7 +61,7 @@
 
                     <!-- Clear Filters -->
                     @if($directionId || $fonctionId || $search)
-                        <button wire:click="resetFilters()" style="width: 100%; padding: 0.75rem; background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                        <button wire:click="resetFilters()" style="width: 100%; padding: 0.75rem; background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                             Réinitialiser
                         </button>
                     @endif

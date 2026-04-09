@@ -1,14 +1,3 @@
-{{--
-    FICHIER : resources/views/livewire/annuaire/directory-index.blade.php
-    COMPOSANT : App\Livewire\Annuaire\DirectoryIndex
-    RÔLE : Page principale de l'annuaire.
-           Recherche temps réel (wire:model.live.debounce.300ms),
-           filtres par direction / entité / fonction,
-           grille de cartes agents paginée (24 par page),
-           sidebar organisationnelle,
-           bouton Ajouter réservé aux admins.
-    ACCÈS : Tout utilisateur authentifié (consultant + admin)
---}}
 <div>
 <x-app-layout>
 <style>
