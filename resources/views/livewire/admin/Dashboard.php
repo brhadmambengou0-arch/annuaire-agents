@@ -9,6 +9,7 @@ use App\Models\Entity;
 use App\Models\Fonction;
 use Illuminate\Support\Facades\Auth;
 
+
 class Dashboard extends Component
 {
     public $total_users = 0;
