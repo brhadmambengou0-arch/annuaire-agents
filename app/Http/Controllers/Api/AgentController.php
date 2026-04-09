@@ -23,9 +23,9 @@ class AgentController extends controller
             ->when($request->direction_id, function ($q) use ($request) {
                 $q->whereHas('entity', function ($eq) use ($request) {
                     $eq->where('id', $request->direction_id)
-                       ->orWhere('parent_id', $request->direction_id)
+                       ->orWhere('parent_uuid', $request->direction_id)
                        ->orWhereHas('parent', fn($p) =>
-                           $p->where('parent_id', $request->direction_id)
+                           $p->where('parent_uuid', $request->direction_id)
                        );
                 });
             })

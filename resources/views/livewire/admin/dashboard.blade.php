@@ -1,8 +1,3 @@
-{{--
-    FICHIER : resources/views/livewire/admin/dashboard.blade.php
-    INSTITUTION : ANINF — Agence Nationale des Infrastructures Numériques et des Fréquences
-    COMPOSANT : App\Livewire\Admin\Dashboard
---}}
 <div>
 <x-app-layout>
 
@@ -728,7 +723,7 @@
                 </div>
             </div>
             <div class="db-hero-center">
-                <div class="db-hero-title">Tableau de bord</div>
+                
                 <div class="db-hero-subtitle">Administration — Gestion des agents et des structures</div>
             </div>
             <div class="db-hero-right">

@@ -292,6 +292,8 @@ class DirectoryIndex extends Component
             'fonctions' => $this->fonctions,
             'allEntities' => $this->allEntities,
             'entityTree' => $this->entityTree,
-        ]);
+            'directions' => Entity::where('type','direction')->whereNull('parent_uuid')->orderBy('nom')->get(),
+            'services' => Entity::where('type','service')->orderBy('nom')->get(),
+            ]);
     }
 }
