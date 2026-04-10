@@ -131,15 +131,18 @@
         }
 
         .entity-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: start;
         }
 
         .entity-info {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 1rem;
+            flex: 1;
+            min-width: 0;
         }
 
         .entity-icon {
@@ -152,6 +155,10 @@
             font-weight: 600;
             color: white;
             flex-shrink: 0;
+        }
+
+        .entity-details {
+            min-width: 0;
         }
 
         .entity-direction { background: #0369a1; }
@@ -174,6 +181,25 @@
         .entity-actions {
             display: flex;
             gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .entity-actions button {
+            min-width: 94px;
+            min-height: 36px;
+            padding: 0.45rem 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+
+        .entity-actions button:hover {
+            transform: translateY(-1px);
         }
 
         .entity-children {
@@ -187,13 +213,22 @@
             border-radius: 8px;
             padding: 0.75rem 1rem;
             margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: start;
+            min-height: 72px;
         }
 
         .entity-child:last-child {
             margin-bottom: 0;
+        }
+
+        .entity-child .entity-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            min-width: 0;
         }
 
         .status-badge {
@@ -337,7 +372,7 @@
 
     {{-- Header --}}
     <div class="admin-header">
-        <h1>Hiérarchie des Entités</h1>
+        <h1>I Entités</h1>
         <p>Gérer les directions, services et départements</p>
     </div>
 
@@ -420,17 +455,16 @@
                                         </div>
                                     </div>
                                     <div class="entity-actions">
-                                        <span class="status-badge {{ $service->is_active ? 'status-active' : 'status-inactive' }}" style="font-size:0.7rem;padding:0.2rem 0.6rem;">
+                                        <span class="status-badge {{ $service->is_active ? 'status-active' : 'status-inactive' }}">
                                             {{ $service->is_active ? 'Actif' : 'Inactif' }}
                                         </span>
-                                        <button wire:click="editEntity({{ $service->id }})" class="btn-secondary" style="padding:0.3rem 0.6rem;font-size:0.7rem;">Modifier</button>
-                                        <button wire:click="toggleActive({{ $service->id }})" class="btn-success" style="padding:0.3rem 0.6rem;font-size:0.7rem;">
+                                        <button wire:click="editEntity({{ $service->id }})" class="btn-secondary">Modifier</button>
+                                        <button wire:click="toggleActive({{ $service->id }})" class="btn-success">
                                             {{ $service->is_active ? 'Désactiver' : 'Activer' }}
                                         </button>
                                         <button wire:click="deleteEntity({{ $service->id }})"
                                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')"
-                                                class="btn-danger"
-                                                style="padding:0.3rem 0.6rem;font-size:0.7rem;">
+                                                class="btn-danger">
                                             Supprimer
                                         </button>
                                     </div>
@@ -453,17 +487,16 @@
                                                     </div>
                                                 </div>
                                                 <div class="entity-actions">
-                                                    <span class="status-badge {{ $departement->is_active ? 'status-active' : 'status-inactive' }}" style="font-size:0.65rem;padding:0.15rem 0.5rem;">
+                                                    <span class="status-badge {{ $departement->is_active ? 'status-active' : 'status-inactive' }}">
                                                         {{ $departement->is_active ? 'Actif' : 'Inactif' }}
                                                     </span>
-                                                    <button wire:click="editEntity({{ $departement->id }})" class="btn-secondary" style="padding:0.25rem 0.5rem;font-size:0.65rem;">Modifier</button>
-                                                    <button wire:click="toggleActive({{ $departement->id }})" class="btn-success" style="padding:0.25rem 0.5rem;font-size:0.65rem;">
+                                                    <button wire:click="editEntity({{ $departement->id }})" class="btn-secondary">Modifier</button>
+                                                    <button wire:click="toggleActive({{ $departement->id }})" class="btn-success">
                                                         {{ $departement->is_active ? 'Désactiver' : 'Activer' }}
                                                     </button>
                                                     <button wire:click="deleteEntity({{ $departement->id }})"
                                                             onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce département ?')"
-                                                            class="btn-danger"
-                                                            style="padding:0.25rem 0.5rem;font-size:0.65rem;">
+                                                            class="btn-danger">
                                                         Supprimer
                                                     </button>
                                                 </div>

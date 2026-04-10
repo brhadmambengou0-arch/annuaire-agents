@@ -16,7 +16,7 @@ class EntitySeeder extends Seeder
             'nom' => 'Direction Générale',
             'code' => 'DG',
             'type' => 'direction',
-            'ordre' => 1,
+            'ordre' => 11,
             'is_active' => true,
         ]);
 
@@ -24,31 +24,59 @@ class EntitySeeder extends Seeder
         $da = Entity::create([
             'id' => (string) Str::uuid(),
             'nom' => 'Direction des Applications',
-            'code' => 'DA',
+            'code' => 'DAP',
             'type' => 'direction',
-            'ordre' => 2,
+            'ordre' => 7,
             'is_active' => true,
         ]);
 
-        // 3. Créer le Service Étude et Développement (rattaché à la DA)
+        // 3. Créer le Service SSI (rattaché à la DA)
         Entity::create([
             'id' => (string) Str::uuid(),
-            'nom' => 'Service Étude et Développement',
+            'nom' => 'Service SSI',
+            'code' => 'SSI',
+            'type' => 'service',
+            'parent_uuid' => $da->id,
+            'ordre' => 7,
+            'is_active' => true,
+        ]);
+
+        // 4. Créer le Service SED(rattaché à la DA)
+        Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Service SED',
             'code' => 'SED',
+            'type' => 'service',
+            'parent_uuid' => $da->id,
+            'ordre' => 7,
+            'is_active' => true,
+        ]);
+         // 4. Créartion du service Archive (rattaché à la DIR)
+        Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Service Archive',
+            'code' => 'SA',
             'type' => 'service',
             'parent_uuid' => $da->id,
             'ordre' => 1,
             'is_active' => true,
         ]);
-
-        // 4. Créer le Service Maintenance (rattaché à la DA)
-        Entity::create([
+         // 1. Créer la Direction des Affaires Générales
+        $dg = Entity::create([
             'id' => (string) Str::uuid(),
-            'nom' => 'Service Maintenance',
-            'code' => 'SM',
+            'nom' => 'Direction des Affaires Générales',
+            'code' => 'DAG',
+            'type' => 'direction',
+            'ordre' => 3,
+            'is_active' => true,
+        ]);
+         // 1. Créer la Direction des Affaires Générales
+        $dg = Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Approvisionnement',
+            'code' => 'DAG',
             'type' => 'service',
-            'parent_uuid' => $da->id,
-            'ordre' => 2,
+            'ordre' => 3,
             'is_active' => true,
         ]);
     }

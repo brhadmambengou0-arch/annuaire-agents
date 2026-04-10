@@ -304,12 +304,16 @@
     grid-template-columns: 1fr 360px;
     gap: 1.25rem;
     margin-bottom: 1.25rem;
+    align-items: start;
 }
 
 /* ═══════════════════════════════════════════
    CARD BASE
 ═══════════════════════════════════════════ */
 .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background: var(--aninf-card);
     border-radius: var(--radius-lg);
     border: 1px solid var(--aninf-border);
@@ -317,6 +321,11 @@
     overflow: hidden;
     animation: fadeUp 0.5s ease both;
     animation-delay: 0.25s;
+    min-height: 280px;
+}
+
+.card-body {
+    flex: 1;
 }
 
 .card-header {
@@ -450,6 +459,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
     padding: 1.25rem 1.5rem;
+    align-items: stretch;
+    grid-auto-rows: 1fr;
 }
 
 .action-btn {
@@ -465,6 +476,12 @@
     background: #fafbfe;
     transition: all 0.18s;
     text-align: center;
+    min-height: 120px;
+}
+
+.action-btn .action-btn-label,
+.action-btn .action-btn-desc {
+    width: 100%;
 }
 
 .action-btn:hover {
@@ -855,10 +872,10 @@
                         <div class="card-header-title">Actions rapides</div>
                     </div>
                     <div class="actions-grid">
-                        <a href="{{ route('annuaire.index') }}" class="action-btn">
+                        <a href="{{ route('admin.agents') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
-                            <div class="action-btn-label">Annuaire</div>
-                            <div class="action-btn-desc">Consulter les agents</div>
+                            <div class="action-btn-label">Agents</div>
+                            <div class="action-btn-desc">Gérer les agents</div>
                         </a>
                         <a href="{{ route('admin.entities') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
@@ -870,10 +887,10 @@
                             <div class="action-btn-label">Fonctions</div>
                             <div class="action-btn-desc">Référentiel postes</div>
                         </a>
-                        <a href="{{ route('annuaire.index') }}" class="action-btn">
+                        <a href="{{ route('admin.agents') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
-                            <div class="action-btn-label">Ajouter</div>
-                            <div class="action-btn-desc">Nouvel agent</div>
+                            <div class="action-btn-label">Ajouter un agent</div>
+                            <div class="action-btn-desc">Créer un nouveau profil</div>
                         </a>
                     </div>
                 </div>
@@ -910,7 +927,7 @@
                             @if($total_agents > 0)
                             <div class="progress-row">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width:{{ round($row->nb_agents / $total_agents * 100) }}%"></div>
+                                    <div class="progress-fill" style="width: {{ round($row->nb_agents / $total_agents * 100) }}%;"></div>
                                 </div>
                                 <span class="progress-pct">{{ round($row->nb_agents / $total_agents * 100) }}%</span>
                             </div>

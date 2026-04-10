@@ -787,26 +787,7 @@ const AGENTS = @json(isset($agents) ? $agents->map(function($a){
   ];
 }) : collect() );
 
-/* ── Données de démo (utilisées si $agents non défini) ──────── */
-const DEMO = [
-  {id:1,nom:'SOW',prenom:'Ibrahima',mat:'MAT001',email:'i.sow@institution.sn',tel:'+221 77 100 00 01',tel_int:'201',bureau:'A-201',dir_id:1,dir_nom:'DRH',entity_nom:'Service Recrutement',fn_id:8,fn_lib:'Chef de Service',fn_niv:3,date:'10/06/2019',active:true,init:'IS',color:'#0284c7'},
-  {id:2,nom:'DIALLO',prenom:'Fatoumata',mat:'MAT002',email:'f.diallo@institution.sn',tel:'+221 77 100 00 02',tel_int:'202',bureau:'A-105',dir_id:1,dir_nom:'DRH',entity_nom:'DRH',fn_id:7,fn_lib:"Chargée d'Études",fn_niv:3,date:'15/03/2020',active:true,init:'FD',color:'#0369a1'},
-  {id:3,nom:'NDIAYE',prenom:'Omar',mat:'MAT003',email:'o.ndiaye@institution.sn',tel:'+221 77 100 00 03',tel_int:'301',bureau:'B-301',dir_id:2,dir_nom:'DAF',entity_nom:'Service Comptabilité',fn_id:5,fn_lib:'Comptable',fn_niv:2,date:'20/01/2018',active:true,init:'ON',color:'#0ea5e9'},
-  {id:4,nom:'BA',prenom:'Aminata',mat:'MAT004',email:'a.ba@institution.sn',tel:'+221 77 100 00 04',tel_int:'210',bureau:'B-210',dir_id:2,dir_nom:'DAF',entity_nom:'DAF',fn_id:11,fn_lib:'Directrice',fn_niv:5,date:'01/09/2015',active:true,init:'AB',color:'#0891b2'},
-  {id:5,nom:'FALL',prenom:'Moussa',mat:'MAT005',email:'m.fall@institution.sn',tel:'+221 77 100 00 05',tel_int:'401',bureau:'C-401',dir_id:3,dir_nom:'DSI',entity_nom:'Service Dev',fn_id:4,fn_lib:'Informaticien',fn_niv:2,date:'12/07/2021',active:true,init:'MF',color:'#38bdf8'},
-  {id:6,nom:'SARR',prenom:'Aissatou',mat:'MAT006',email:'a.sarr@institution.sn',tel:'+221 77 100 00 06',tel_int:'402',bureau:'C-402',dir_id:3,dir_nom:'DSI',entity_nom:'Service Infrastructure',fn_id:8,fn_lib:'Chef de Service',fn_niv:3,date:'03/04/2017',active:true,init:'AS',color:'#0e7490'},
-  {id:7,nom:'THIAM',prenom:'Cheikh',mat:'MAT007',email:'c.thiam@institution.sn',tel:'+221 77 100 00 07',tel_int:'101',bureau:'D-101',dir_id:4,dir_nom:'DJ',entity_nom:'Service Contentieux',fn_id:9,fn_lib:'Juriste',fn_niv:3,date:'05/01/2022',active:true,init:'CT',color:'#0284c7'},
-  {id:8,nom:'MBAYE',prenom:'Rokhaya',mat:'MAT008',email:'r.mbaye@institution.sn',tel:'+221 77 100 00 08',tel_int:'102',bureau:'D-102',dir_id:4,dir_nom:'DJ',entity_nom:'DJ',fn_id:10,fn_lib:'Conseillère',fn_niv:4,date:'28/11/2016',active:true,init:'RM',color:'#0369a1'},
-  {id:9,nom:'DIOUF',prenom:'Lamine',mat:'MAT009',email:'l.diouf@institution.sn',tel:'+221 77 100 00 09',tel_int:'201',bureau:'E-201',dir_id:5,dir_nom:'DC',entity_nom:'Service Presse',fn_id:6,fn_lib:'Chargé de Communication',fn_niv:2,date:'14/02/2023',active:true,init:'LD',color:'#0ea5e9'},
-  {id:10,nom:'CISSE',prenom:'Ndèye',mat:'MAT010',email:'n.cisse@institution.sn',tel:'+221 77 100 00 10',tel_int:'203',bureau:'E-203',dir_id:5,dir_nom:'DC',entity_nom:'DC',fn_id:2,fn_lib:'Secrétaire',fn_niv:1,date:'21/08/2019',active:true,init:'NC',color:'#0891b2'},
-  {id:11,nom:'TOURE',prenom:'Boubacar',mat:'MAT011',email:'b.toure@institution.sn',tel:'+221 77 100 00 11',tel_int:'103',bureau:'A-102',dir_id:1,dir_nom:'DRH',entity_nom:'DRH',fn_id:1,fn_lib:'Agent',fn_niv:1,date:'10/01/2024',active:true,init:'BT',color:'#38bdf8'},
-  {id:12,nom:'GUEYE',prenom:'Mariama',mat:'MAT012',email:'m.gueye@institution.sn',tel:'+221 77 100 00 12',tel_int:'001',bureau:'F-101',dir_id:6,dir_nom:'DG',entity_nom:'Direction Générale',fn_id:13,fn_lib:'Directrice Générale',fn_niv:6,date:'15/05/2013',active:true,init:'MG',color:'#0e7490'},
-  {id:13,nom:'WADE',prenom:'Seydou',mat:'MAT013',email:'s.wade@institution.sn',tel:'+221 77 100 00 13',tel_int:'315',bureau:'B-315',dir_id:2,dir_nom:'DAF',entity_nom:'Service Budget',fn_id:3,fn_lib:'Agent Principal',fn_niv:2,date:'30/09/2020',active:true,init:'SW',color:'#0284c7'},
-  {id:14,nom:'KAMARA',prenom:'Binta',mat:'MAT014',email:'b.kamara@institution.sn',tel:'+221 77 100 00 14',tel_int:'403',bureau:'C-403',dir_id:3,dir_nom:'DSI',entity_nom:'Service Dev',fn_id:4,fn_lib:'Informaticienne',fn_niv:2,date:'01/11/2021',active:false,init:'BK',color:'#94a3b8'},
-  {id:15,nom:'FAYE',prenom:'Abdou',mat:'MAT015',email:'a.faye@institution.sn',tel:'+221 77 100 00 15',tel_int:'202',bureau:'E-202',dir_id:5,dir_nom:'DC',entity_nom:'DC',fn_id:11,fn_lib:'Directeur',fn_niv:5,date:'08/03/2014',active:true,init:'AF',color:'#0369a1'},
-];
 
-const DATA = (AGENTS && AGENTS.length > 0) ? AGENTS : DEMO;
 
 const ORG = [
   {id:1,nom:'Direction Générale',code:'DG',type:'direction',agents:1,children:[

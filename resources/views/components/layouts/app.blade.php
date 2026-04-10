@@ -37,6 +37,7 @@
             @if(auth()->user()->role === 'admin')
                 <div class="nav-divider"></div>
                 <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Tableau de bord <span class="nav-badge">Admin</span></a>
+                <a href="{{ route('admin.agents') }}" class="nav-link {{ request()->routeIs('admin.agents') ? 'active' : '' }}">Agents</a>
                 <a href="{{ route('admin.entities') }}" class="nav-link {{ request()->routeIs('admin.entities') ? 'active' : '' }}">Entités</a>
                 <a href="{{ route('admin.fonctions') }}" class="nav-link {{ request()->routeIs('admin.fonctions') ? 'active' : '' }}">Fonctions</a>
             @else
