@@ -21,16 +21,16 @@ class StoreAgentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'matricule'           => 'required|string|max:20|unique:agents,matricule',
-            'nom'                 => 'required|string|max:100',
-            'prenom'              => 'required|string|max:100',
-            'email'               => 'nullable|email|unique:agents,email',
-            'telephone'           => 'nullable|string|max:25',
-            'telephone_interne'   => 'nullable|string|max:10',
-            'entity_id'           => 'required|exists:entities,id',
-            'fonction_id'         => 'required|exists:fonctions,id',
-            'bureau'              => 'nullable|string|max:50',
-            'date_prise_fonction' => 'nullable|date',
+            'matricule'                 => 'required|string|max:20|unique:agents,matricule',
+            'nom'                       => 'required|string|max:100',
+            'prenom'                    => 'required|string|max:100',
+            'email'                     => 'nullable|email|unique:agents,email',
+            'telephone_professionnel'   => 'nullable|string|max:25',
+            'telephone_prive'           => 'nullable|string|max:10',
+            'entity_id'                 => 'required|exists:entities,id',
+            'fonction_id'               => 'required|exists:fonctions,id',
+            'bureau'                    => 'nullable|string|max:50',
+            'date_prise_fonction'       => 'nullable|date',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAgentRequest;
 use App\Http\Requests\UpdateAgentRequest;
@@ -9,6 +10,7 @@ use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use App\Mail\AgentCreatedMail;  
 
 class AgentController extends controller
 {
@@ -23,9 +25,9 @@ class AgentController extends controller
             ->when($request->direction_id, function ($q) use ($request) {
                 $q->whereHas('entity', function ($eq) use ($request) {
                     $eq->where('id', $request->direction_id)
-                       ->orWhere('parent_id', $request->direction_id)
+                       ->orWhere('parent_uuid', $request->direction_id)
                        ->orWhereHas('parent', fn($p) =>
-                           $p->where('parent_id', $request->direction_id)
+                           $p->where('parent_uuid', $request->direction_id)
                        );
                 });
             })
@@ -45,8 +47,6 @@ class AgentController extends controller
 
     public function store(StoreAgentRequest $request): JsonResponse
     {
-        Gate::authorize('create', Agent::class);
-
         $validated = $request->validated();
 
         if (isset($validated['nom'])) {
@@ -55,11 +55,12 @@ class AgentController extends controller
 
         $agent = Agent::create($validated);
 
-        return response()->json(
-            $agent->load(['entity', 'fonction']),
-            201
-        );
+        // Envoi du mail d'invitation
+        Mail::to($agent->email)->send(new AgentCreatedMail($agent, $validated['password']));
+
+        return response()->json($agent->load(['entity', 'fonction']), 201);
     }
+   
 
     public function update(UpdateAgentRequest $request, int $id): JsonResponse
     {

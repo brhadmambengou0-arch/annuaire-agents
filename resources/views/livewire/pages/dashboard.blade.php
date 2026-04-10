@@ -1,516 +1,163 @@
-{{-- dashboard admin --}}
+{{-- Dashboard moderne ANINF --}}
 <div>
-<x-app-layout>
-
-<style>
-    /* page principale */
-    .page-admin {
-        background-color: #f1f5f9;
-        min-height: 90vh;
-    }
-
-    /* header en haut */
-    .top-header {
-        background: linear-gradient(to right, #0369a1, #0ea5e9);
-        padding: 30px;
-        padding-bottom: 50px;
-    }
-    .top-header h1 {
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-    }
-    .top-header p {
-        color: rgba(255,255,255,0.7);
-        font-size: 13px;
-        margin-top: 3px;
-    }
-    .badge-role {
-        background: rgba(255,255,255,0.25);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 15px;
-        font-size: 12px;
-    }
-
-    /* contenu principal */
-    .contenu {
-        max-width: 1200px;
-        margin: 0 auto;
-        margin-top: -25px;
-        padding: 0 20px 60px 20px;
-        position: relative;
-        z-index: 10;
-    }
-
-    /* les 4 cartes de stats */
-    .grid-stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-    .carte-stat {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 20px;
-        border-top: 4px solid #0ea5e9;
-    }
-    .carte-stat.verte { border-top-color: #059669; }
-    .carte-stat.orange { border-top-color: #d97706; }
-    .carte-stat.violette { border-top-color: #7c3aed; }
-
-    .grand-nombre {
-        font-size: 36px;
-        font-weight: 900;
-        color: #0c4a6e;
-    }
-    .libelle-stat {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: #64748b;
-        font-weight: 600;
-        letter-spacing: 1px;
-    }
-    .sous-libelle {
-        font-size: 11px;
-        color: #aaa;
-        margin-top: 4px;
-    }
-
-    /* carte blanche générique */
-    .ma-carte {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .titre-carte {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0369a1;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #e0f2fe;
-        margin-bottom: 18px;
-    }
-
-    /* grille 2 colonnes */
-    .deux-colonnes {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-    .colonne-gauche {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    .colonne-droite {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    /* liste agents/users récents */
-    .liste-recente {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .item-recent {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        background: #f8fafc;
-        border-radius: 8px;
-        border: 1px solid #f1f5f9;
-    }
-    .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-        color: white;
-        background: linear-gradient(135deg, #0369a1, #0ea5e9);
-        flex-shrink: 0;
-    }
-    .avatar.vert {
-        background: linear-gradient(135deg, #059669, #0d9488);
-    }
-    .info-principale {
-        flex: 1;
-    }
-    .nom-agent {
-        font-size: 13px;
-        font-weight: 600;
-        color: #0c4a6e;
-    }
-    .sous-info {
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 2px;
-    }
-    .date-ajout {
-        font-size: 11px;
-        color: #aaa;
-        white-space: nowrap;
-    }
-
-    /* actions rapides */
-    .grille-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-    .btn-action {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 15px;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        text-decoration: none;
-        background: white;
-        transition: 0.15s;
-    }
-    .btn-action:hover {
-        border-color: #0ea5e9;
-        background: #f0f9ff;
-    }
-    .btn-action .titre {
-        font-size: 13px;
-        font-weight: 700;
-        color: #0369a1;
-    }
-    .btn-action .desc {
-        font-size: 11px;
-        color: #aaa;
-    }
-
-    /* infos systeme */
-    .grille-sys {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-    .info-sys {
-        padding: 12px;
-        background: #f8fafc;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-    }
-    .label-sys {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: #aaa;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-    .valeur-sys {
-        font-size: 13px;
-        font-weight: 600;
-        color: #0c4a6e;
-    }
-
-    /* tableau repartition */
-    .mon-tableau {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-    }
-    .mon-tableau th {
-        text-align: left;
-        padding: 8px 12px;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #aaa;
-        font-weight: 600;
-        background: #f8fafc;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .mon-tableau td {
-        padding: 10px 12px;
-        border-bottom: 1px solid #f1f5f9;
-        color: #475569;
-    }
-    .mon-tableau tr:last-child td {
-        border-bottom: none;
-    }
-    .mon-tableau tr:hover td {
-        background: #f8fafc;
-    }
-
-    /* badges */
-    .badge {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-    }
-    .badge-admin { background: #dbeafe; color: #1e40af; }
-    .badge-consultant { background: #e0f2fe; color: #0369a1; }
-    .badge-direction { background: #dbeafe; color: #1e40af; }
-    .badge-service { background: #e0f2fe; color: #0369a1; }
-    .badge-departement { background: #f0fdf4; color: #065f46; }
-
-    /* petit bouton */
-    .btn-petit {
-        display: inline-block;
-        padding: 5px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-    }
-    .btn-bleu { background: #0369a1; color: white; }
-    .btn-bleu:hover { background: #0284c7; }
-
-    /* responsive basique */
-    @media (max-width: 900px) {
-        .grid-stats { grid-template-columns: 1fr 1fr; }
-        .deux-colonnes { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 550px) {
-        .grid-stats { grid-template-columns: 1fr; }
-        .grille-actions { grid-template-columns: 1fr; }
-        .grille-sys { grid-template-columns: 1fr; }
-    }
-</style>
-
-<div class="page-admin">
-
-    {{-- bandeau du haut --}}
-    <div class="top-header">
-        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
-            <div>
-                <h1>Tableau de bord Admin</h1>
-                <p>{{ now()->translatedFormat('l d F Y, H:i') }}</p>
-            </div>
-            <div class="badge-role">Administrateur</div>
-        </div>
-    </div>
-
-    <div class="contenu">
-
-        {{-- statistiques --}}
-        <div class="grid-stats">
-            <div class="carte-stat">
-                <div class="grand-nombre">{{ $total_users }}</div>
-                <div class="libelle-stat">Utilisateurs</div>
-                <div class="sous-libelle">Comptes enregistrés</div>
-            </div>
-            <div class="carte-stat verte">
-                <div class="grand-nombre">{{ $total_agents }}</div>
-                <div class="libelle-stat">Agents actifs</div>
-                <div class="sous-libelle">Dans l'annuaire</div>
-            </div>
-            <div class="carte-stat orange">
-                <div class="grand-nombre">{{ $total_entities }}</div>
-                <div class="libelle-stat">Entités</div>
-                <div class="sous-libelle">Directions, services...</div>
-            </div>
-            <div class="carte-stat violette">
-                <div class="grand-nombre">{{ $total_fonctions }}</div>
-                <div class="libelle-stat">Fonctions</div>
-                <div class="sous-libelle">Postes du référentiel</div>
-            </div>
-        </div>
-
-        {{-- zone principale avec 2 colonnes --}}
-        <div class="deux-colonnes">
-
-            {{-- gauche --}}
-            <div class="colonne-gauche">
-
-                {{-- derniers agents ajoutés --}}
-                <div class="ma-carte">
-                    <div class="titre-carte">Agents récemment ajoutés</div>
-
-                    <div class="liste-recente">
-                        @forelse($recent_agents as $agent)
-                            <div class="item-recent">
-                                <div class="avatar vert">
-                                    {{ strtoupper(substr($agent->prenom, 0, 1)) }}{{ strtoupper(substr($agent->nom, 0, 1)) }}
-                                </div>
-                                <div class="info-principale">
-                                    <div class="nom-agent">{{ $agent->prenom }} {{ $agent->nom }}</div>
-                                    <div class="sous-info">
-                                        {{ $agent->matricule }} —
-                                        {{ $agent->fonction->libelle ?? 'Pas de fonction' }} —
-                                        {{ $agent->entity->nom ?? 'Pas d\'entité' }}
-                                    </div>
-                                </div>
-                                <div class="date-ajout">{{ $agent->created_at->diffForHumans() }}</div>
-                            </div>
-                        @empty
-                            <p style="color:#aaa; font-size:13px; text-align:center; padding:15px;">
-                                Aucun agent pour l'instant.
-                            </p>
-                        @endforelse
-                    </div>
-
-                    <div style="margin-top:15px; text-align:right;">
-                        <a href="{{ route('annuaire.index') }}" class="btn-petit btn-bleu">Voir l'annuaire</a>
-                    </div>
-                </div>
-
-                {{-- derniers utilisateurs --}}
-                <div class="ma-carte">
-                    <div class="titre-carte">Derniers utilisateurs créés</div>
-
-                    <div class="liste-recente">
-                        @forelse($recent_users as $user)
-                            <div class="item-recent">
-                                <div class="avatar">
-                                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                                </div>
-                                <div class="info-principale">
-                                    <div class="nom-agent">{{ $user->name }}</div>
-                                    <div class="sous-info">
-                                        {{ $user->email }}
-                                        &nbsp;
-                                        <span class="badge badge-{{ $user->role }}">{{ ucfirst($user->role) }}</span>
-                                    </div>
-                                </div>
-                                <div class="date-ajout">{{ $user->created_at->diffForHumans() }}</div>
-                            </div>
-                        @empty
-                            <p style="color:#aaa; font-size:13px; text-align:center; padding:15px;">
-                                Aucun utilisateur trouvé.
-                            </p>
-                        @endforelse
-                    </div>
-                </div>
-
-            </div>
-
-            {{-- droite --}}
-            <div class="colonne-droite">
-
-                {{-- raccourcis --}}
-                <div class="ma-carte">
-                    <div class="titre-carte">Actions rapides</div>
-                    <div class="grille-actions">
-                        <a href="{{ route('annuaire.index') }}" class="btn-action">
-                            <span class="titre">Annuaire</span>
-                            <span class="desc">Voir tous les agents</span>
-                        </a>
-                        <a href="{{ route('admin.entities') }}" class="btn-action">
-                            <span class="titre">Entités</span>
-                            <span class="desc">Gérer les structures</span>
-                        </a>
-                        <a href="{{ route('admin.fonctions') }}" class="btn-action">
-                            <span class="titre">Fonctions</span>
-                            <span class="desc">Liste des postes</span>
-                        </a>
-                        <a href="{{ route('annuaire.index') }}" class="btn-action">
-                            <span class="titre">Ajouter agent</span>
-                            <span class="desc">Nouveau agent</span>
-                        </a>
-                    </div>
-                </div>
-
-                {{-- infos sur l'application --}}
-                <div class="ma-carte">
-                    <div class="titre-carte">Infos système</div>
-                    <div class="grille-sys">
-                        <div class="info-sys">
-                            <div class="label-sys">Framework</div>
-                            <div class="valeur-sys">Laravel {{ app()->version() }}</div>
-                        </div>
-                        <div class="info-sys">
-                            <div class="label-sys">Base de données</div>
-                            <div class="valeur-sys">{{ strtoupper(config('database.default')) }}</div>
-                        </div>
-                        <div class="info-sys">
-                            <div class="label-sys">PHP</div>
-                            <div class="valeur-sys">{{ PHP_VERSION }}</div>
-                        </div>
-                        <div class="info-sys">
-                            <div class="label-sys">Environnement</div>
-                            <div class="valeur-sys">{{ ucfirst(app()->environment()) }}</div>
-                        </div>
-                        <div class="info-sys" style="grid-column: 1 / -1;">
-                            <div class="label-sys">Consulté le</div>
-                            <div class="valeur-sys">{{ now()->format('d/m/Y à H:i:s') }}</div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- alerte agents désactivés s'il y en a --}}
-                @if($agents_inactifs > 0)
-                    <div class="ma-carte" style="border-left: 3px solid #f59e0b;">
-                        <div class="titre-carte" style="color:#d97706;">Agents désactivés</div>
-                        <p style="font-size:13px; color:#92400e; margin-bottom:12px;">
-                            Il y a <strong>{{ $agents_inactifs }}</strong> agent(s) désactivé(s).
-                        </p>
-                        <a href="{{ route('annuaire.index') }}" class="btn-petit btn-bleu">Voir l'annuaire</a>
-                    </div>
-                @endif
-
-            </div>
-        </div>
-
-        {{-- tableau repartition par direction --}}
-        <div class="ma-carte">
-            <div class="titre-carte">Agents par direction</div>
-
-            @if($repartition->count() > 0)
-                <table class="mon-tableau">
-                    <thead>
-                        <tr>
-                            <th>Entité</th>
-                            <th>Type</th>
-                            <th>Nb agents</th>
-                            <th>Pourcentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($repartition as $row)
-                            <tr>
-                                <td style="font-weight:600; color:#0c4a6e;">{{ $row->nom }}</td>
-                                <td>
-                                    <span class="badge badge-{{ $row->type }}">{{ ucfirst($row->type) }}</span>
-                                </td>
-                                <td>{{ $row->nb_agents }}</td>
-                                <td>
-                                    @if($total_agents > 0)
-                                        @php $pct = round($row->nb_agents / $total_agents * 100) @endphp
-                                        <div style="display:flex; align-items:center; gap:8px;">
-                                            <div style="width:80px; height:6px; background:#e2e8f0; border-radius:3px;">
-                                                <div style="width:{{ $pct }}%; height:6px; background:#0ea5e9; border-radius:3px;"></div>
-                                            </div>
-                                            <span style="font-size:12px; color:#64748b;">{{ $pct }}%</span>
-                                        </div>
-                                    @else
-                                        0%
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <p style="color:#aaa; font-size:13px; text-align:center; padding:15px;">
-                    Pas encore de données.
+    <x-app-layout>
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- PAGE TITLE -->
+            <div style="padding-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0;">
+                <h1 style="font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">
+                    Tableau de bord
+                </h1>
+                <p style="color: #64748b; font-size: 0.95rem;">
+                    Bienvenue dans ANINF — {{ now()->translatedFormat('d F Y') }}
                 </p>
+            </div>
+
+            <!-- STATS GRID -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <!-- Total Users -->
+                <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; border-top: 4px solid #0369a1; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <p style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Utilisateurs</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #0f172a; line-height: 1;">{{ $total_users }}</p>
+                        </div>
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #0369a1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">👤</div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #64748b;">Utilisateurs actifs</p>
+                </div>
+
+                <!-- Total Agents -->
+                <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; border-top: 4px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <p style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Agents</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #0f172a; line-height: 1;">{{ $total_agents }}</p>
+                        </div>
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">🧑</div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #64748b;">Agents actifs</p>
+                </div>
+
+                <!-- Total Entities -->
+                <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; border-top: 4px solid #f59e0b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <p style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Entités</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #0f172a; line-height: 1;">{{ $total_entities }}</p>
+                        </div>
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">🏢</div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #64748b;">Organisations</p>
+                </div>
+
+                <!-- Total Fonctions -->
+                <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; border-top: 4px solid #8b5cf6; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <p style="font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Fonctions</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #0f172a; line-height: 1;">{{ $total_fonctions }}</p>
+                        </div>
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">💼</div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #64748b;">Postes définis</p>
+                </div>
+            </div>
+
+            <!-- TWO COLUMN SECTION -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- LEFT: Recent Agents -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0;">
+                            <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Agents récents</h3>
+                        </div>
+                        <div style="padding: 1rem;">
+                            @if($recent_agents->count() > 0)
+                                @foreach($recent_agents as $agent)
+                                    <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                                        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0ea5e9, #0369a1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;">
+                                            {{ substr($agent->nom, 0, 1) }}
+                                        </div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <p style="font-size: 0.9rem; font-weight: 600; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $agent->nom }}</p>
+                                            <p style="font-size: 0.8rem; color: #94a3b8; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                {{ $agent->fonction?->nom ?? 'Sans fonction' }} · {{ $agent->entity?->nom ?? 'Entité inconnue' }}
+                                            </p>
+                                        </div>
+                                        <p style="font-size: 0.75rem; color: #cbd5e1; white-space: nowrap;">{{ $agent->created_at->diffForHumans() }}</p>
+                                    </div>
+                                @endforeach
+                            @else
+                                <p style="text-align: center; color: #94a3b8; padding: 1rem 0; margin: 0;">Aucun agent récent</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Inactive Agents -->
+                    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Agents inactifs</h3>
+                            <div style="width: 40px; height: 40px; background: #fee2e2; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ef4444; font-weight: 600; font-size: 1.1rem;">{{ $agents_inactifs }}</div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin: 0;">Agents à revoir</p>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem;">
+                        <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0 0 1rem 0;">Actions rapides</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="{{ route('annuaire.index') }}" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #e0f2fe; border-radius: 8px; text-decoration: none; color: #0369a1; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;">
+                                 Consulter annuaire
+                            </a>
+                            @if(auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.entities') }}" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f0fdf4; border-radius: 8px; text-decoration: none; color: #059669; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;">
+                                     Gérer entités
+                                </a>
+                                <a href="{{ route('admin.fonctions') }}" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #fef3c7; border-radius: 8px; text-decoration: none; color: #d97706; font-weight: 600; font-size: 0.9rem; transition: all 0.2s;">
+                                     Gérer fonctions
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DISTRIBUTION SECTION -->
+            @if($repartition->count() > 0)
+                <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                    <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0;">
+                        <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0;">Répartition par entité</h3>
+                    </div>
+                    <div style="padding: 1.5rem; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e2e8f0;">
+                                    <th style="text-align: left; padding: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;">Entité</th>
+                                    <th style="text-align: center; padding: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;">Type</th>
+                                    <th style="text-align: right; padding: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em;">Agents</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($repartition as $entity)
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="padding: 0.75rem; color: #0f172a; font-weight: 500;">{{ $entity->nom }}</td>
+                                        <td style="padding: 0.75rem; text-align: center;">
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f0fdf4; color: #059669; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                                                {{ $entity->type ?? 'Autre' }}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 0.75rem; text-align: right; color: #0369a1; font-weight: 700;">{{ $entity->nb_agents }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             @endif
         </div>
-
-    </div>
+    </x-app-layout>
 </div>
-
-</x-app-layout>
 </div>

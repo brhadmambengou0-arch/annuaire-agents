@@ -17,16 +17,16 @@ class UpdateAgentRequest extends FormRequest
         $agentId = $this->route('id');
 
         return [
-            'nom'                 => 'sometimes|string|max:100',
-            'prenom'              => 'sometimes|string|max:100',
+            'nom'                       => 'sometimes|string|max:100',
+            'prenom'                    => 'sometimes|string|max:100',
             // unique mais ignore l'agent actuel
-            'email'               => 'nullable|email|unique:agents,email,' . $agentId,
-            'telephone'           => 'nullable|string|max:25',
-            'telephone_interne'   => 'nullable|string|max:10',
-            'entity_id'           => 'sometimes|exists:entities,id',
-            'fonction_id'         => 'sometimes|exists:fonctions,id',
-            'bureau'              => 'nullable|string|max:50',
-            'date_prise_fonction' => 'nullable|date',
+            'email'                     => 'nullable|email|unique:agents,email,' . $agentId,
+            'telephone_professionnel'   => 'nullable|string|max:25',
+            'telephone_prive'           => 'nullable|string|max:10',
+            'entity_id'                 => 'sometimes|exists:entities,id',
+            'fonction_id'               => 'sometimes|exists:fonctions,id',
+            'bureau'                    => 'nullable|string|max:50',
+            'date_prise_fonction'       => 'nullable|date',
         ];
     }
 

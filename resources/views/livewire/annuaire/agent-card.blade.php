@@ -15,7 +15,6 @@
 
             <div style="min-width:0;">
                 <div class="agent-name">{{ $agent->prenom }} {{ $agent->nom }}</div>
-                <div class="agent-matricule">{{ $agent->matricule }}</div>
                 @if($agent->bureau)
                 <div style="font-size:0.71rem;color:#64748b;margin-top:2px;">
                     <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;">
@@ -46,13 +45,13 @@
                 {{ $agent->entity->nom ?? '-' }}
             </div>
 
-            {{-- Téléphone --}}
-            @if($agent->telephone)
+            {{-- Téléphone professionnel --}}
+            @if($agent->telephone_professionnel)
             <div class="agent-info-row">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81 19.79 19.79 0 01.07 2.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
                 </svg>
-                <a href="tel:{{ $agent->telephone }}" onclick="event.stopPropagation()">{{ $agent->telephone }}</a>
+                <a href="tel:{{ $agent->telephone_professionnel }}" onclick="event.stopPropagation()">{{ $agent->telephone_professionnel }}</a>
             </div>
             @endif
 
@@ -66,17 +65,6 @@
                 <a href="mailto:{{ $agent->email }}" onclick="event.stopPropagation()" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                     {{ $agent->email }}
                 </a>
-            </div>
-            @endif
-
-            {{-- Poste interne --}}
-            @if($agent->telephone_interne)
-            <div class="agent-info-row">
-                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                    <line x1="12" y1="18" x2="12.01" y2="18"/>
-                </svg>
-                Poste interne : <strong>{{ $agent->telephone_interne }}</strong>
             </div>
             @endif
         </div>

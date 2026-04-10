@@ -216,7 +216,7 @@ class DirectoryIndex extends Component
         ]);
     }
 
-    // 💾 Sauvegarde
+    // Sauvegarde
     public function save()
     {
         $this->validate();
@@ -274,7 +274,7 @@ class DirectoryIndex extends Component
         }
     }
 
-    // 🔁 Activer / désactiver
+    // Activer / désactiver
     public function toggleActive($id)
     {
         $agent = Agent::findOrFail($id);
@@ -284,9 +284,16 @@ class DirectoryIndex extends Component
         $this->openDetail($id);
     }
 
-    // 🖥️ Render
+    //  Render
     public function render()
     {
-        return view('livewire.annuaire.directory-index');
+        return view('livewire.annuaire.directory-index', [
+            'agents' => $this->agents,
+            'fonctions' => $this->fonctions,
+            'allEntities' => $this->allEntities,
+            'entityTree' => $this->entityTree,
+            'directions' => Entity::where('type','direction')->whereNull('parent_uuid')->orderBy('nom')->get(),
+            'services' => Entity::where('type','service')->orderBy('nom')->get(),
+            ]);
     }
 }

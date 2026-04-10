@@ -41,6 +41,7 @@
                 <a href="{{ route('admin.fonctions') }}" class="nav-link {{ request()->routeIs('admin.fonctions') ? 'active' : '' }}">Fonctions</a>
             @else
                 <div class="nav-divider"></div>
+                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Mon espace</a>
                 <a href="{{ route('agent.profile') }}" class="nav-link {{ request()->routeIs('agent.profile') ? 'active' : '' }}">Mon profil</a>
             @endif
             <div class="nav-divider"></div>

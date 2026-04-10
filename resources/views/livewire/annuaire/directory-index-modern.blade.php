@@ -8,56 +8,70 @@
                     <p style="color: #64748b; font-size: 0.95rem;">Consultez la liste complète des agents de l'institution</p>
                 </div>
                 <div style="display: flex; gap: 1rem;">
-
-                </div>
-            </div>
-            <div style="display:flex;justify-content:space-between">
-                <div style="display:flex; gap: 0.5rem;">
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                 <label for="direction">Direction</label>   
-                 <select name="direction" id="">
-                        <option value="">choisir une direction</option>
-                        @foreach($directions as $direction)
-                            <option value="{{ $direction->id }}">{{ $direction->nom }}</option>
-                        @endforeach
-                    </select>
-                  </div>
-                  <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                     <label for="service">Services</label>   
-                     <select name="service" id="">
-                        <option value="">choisir un service</option>
-                        @foreach($services as $service)
-                            <option value="{{ $service->id }}">{{ $service->nom }}</option>
-                        @endforeach
-                      </select>
-                   </div>
-                  <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                     <label for="fonction">Fonctions</label>   
-                     <select name="fonction" id="">
-                        <option value="">choisir une fonction</option>
-                        @foreach($fonctions as $fonction)
-                            <option value="{{ $fonction->id }}">{{ $fonction->libelle}}</option>
-                        @endforeach
-                      </select>
-                   </div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                     <label for="recherche" style="opacity: 0;">Recherche</label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; min-width: 300px;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 1rem; flex: 1; min-width: 300px;">
+                        <span style="color: #94a3b8; font-size: 1.2rem;">🔍</span>
                         <input wire:model.live="search" type="text" placeholder="Rechercher un agent..." style="border: none; outline: none; flex: 1; font-size: 0.9rem; background: transparent;" />
                     </div>
                 </div>
             </div>
+
             <!-- TWO COLUMN LAYOUT -->
-            <div>
+            <div style="display: grid; grid-template-columns: 250px 1fr; gap: 1.5rem;">
                 <!-- SIDEBAR FILTERS -->
-  
+                <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; height: fit-content; position: sticky; top: 100px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0 0 1.5rem 0; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">Filtres</h3>
+
+                    <!-- Filter by Direction -->
+                    @if($entityTree->count() > 0)
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 0.75rem;">Direction</label>
+                            <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;">
+                                    <input wire:model.live="directionId" type="radio" value="" style="cursor: pointer;" />
+                                    <span style="font-size: 0.9rem; color: #475569;">Toutes</span>
+                                </label>
+                                @foreach($entityTree as $direction)
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;">
+                                        <input wire:model.live="directionId" type="radio" value="{{ $direction->id }}" style="cursor: pointer;" />
+                                        <span style="font-size: 0.9rem; color: #475569;">{{ $direction->nom }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Filter by Fonction -->
+                    @if($fonctions->count() > 0)
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 0.75rem;">Fonction</label>
+                            <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;">
+                                    <input wire:model.live="fonctionId" type="radio" value="" style="cursor: pointer;" />
+                                    <span style="font-size: 0.9rem; color: #475569;">Toutes</span>
+                                </label>
+                                @foreach($fonctions as $fonction)
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0.5rem; border-radius: 6px; transition: background 0.2s;">
+                                        <input wire:model.live="fonctionId" type="radio" value="{{ $fonction->id }}" style="cursor: pointer;" />
+                                        <span style="font-size: 0.9rem; color: #475569;">{{ $fonction->nom }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Clear Filters -->
+                    @if($directionId || $fonctionId || $search)
+                        <button wire:click="resetFilters()" style="width: 100%; padding: 0.75rem; background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                            Réinitialiser
+                        </button>
+                    @endif
+                </div>
 
                 <!-- MAIN CONTENT -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- RESULTS INFO -->
                     <div style="padding: 1rem; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd; color: #0369a1; font-size: 0.9rem;">
-                        Affichage de <strong>{{ $agents->count() }}</strong> agent(s)
+                         Affichage de <strong>{{ $agents->count() }}</strong> agent(s)
                     </div>
 
                     <!-- AGENTS GRID -->
