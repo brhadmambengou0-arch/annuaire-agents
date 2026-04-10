@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AgentSeeder extends Seeder
 {
@@ -34,6 +35,7 @@ class AgentSeeder extends Seeder
             if (!$entity || !$fonction) continue;
 
             DB::table('agents')->insertOrIgnore([
+                'id' => (string) Str::uuid(),
                 'matricule'           => $data['matricule'],
                 'nom'                 => $data['nom'],
                 'prenom'              => $data['prenom'],
@@ -41,8 +43,8 @@ class AgentSeeder extends Seeder
                 'telephone'           => $data['telephone'],
                 'telephone_interne'   => $data['telephone_interne'],
                 'bureau'              => $data['bureau'],
-                'entity_Uuuuid'           => $entity->Uuuuid,
-                'fonction_Uuuuid'         => $fonction->Uuuuid,
+                'entity_id'           => $entity->id,
+                'fonction_id'         => $fonction->id,
                 'is_active'           => true,
                 'created_at'          => now(),
                 'updated_at'          => now(),

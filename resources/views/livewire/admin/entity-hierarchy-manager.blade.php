@@ -526,7 +526,7 @@
                                         <small style="color:#64748b;font-weight:400;">(doit être un service)</small>
                                     @endif
                                 </label>
-                                <select wire:model="form.parent_uuid" class="form-select" {{ $form['type'] === 'direction' ? 'disabled' : '' }}>
+                                <select wire:model="form.parent_id" class="form-select" {{ $form['type'] === 'direction' ? 'disabled' : '' }}>
                                     <option value="">
                                         @if($form['type'] === 'direction')
                                             Aucune (direction racine)
@@ -544,7 +544,7 @@
                                         @endif
                                     @endforeach
                                 </select>
-                                @error('form.parent_uuid') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
+                                @error('form.parent_id') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group">

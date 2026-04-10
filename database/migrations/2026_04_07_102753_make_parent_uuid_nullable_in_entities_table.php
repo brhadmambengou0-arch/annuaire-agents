@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('entities', function (Blueprint $table) {
-            $table->uuid('parent_uuid')->nullable()->change();
+            $table->uuid('parent_id')->nullable()->change();
         });
     }
 
     public function down(): void
     {
         Schema::table('entities', function (Blueprint $table) {
-            $table->uuid('parent_uuid')->nullable(false)->change();
+            $table->uuid('parent_id')->nullable(false)->change();
         });
     }
 };

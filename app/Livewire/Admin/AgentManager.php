@@ -92,7 +92,7 @@ class AgentManager extends Component
     public function loadServices()
     {
         if ($this->form['direction_id']) {
-            $this->services = Entity::where('parent_uuid', $this->form['direction_id'])
+            $this->services = Entity::where('parent_id', $this->form['direction_id'])
                 ->where('type', 'service')
                 ->where('is_active', true)
                 ->orderBy('nom')

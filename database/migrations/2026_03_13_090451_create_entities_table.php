@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('nom', 150);
             $table->string('code', 30)->unique();
             $table->enum('type', ['direction', 'service', 'departement','pool']);
-            $table->foreignUuid('parent_uuid');
+            $table->foreignUuid('parent_id');
             $table->text('description')->nullable();
             $table->smallInteger('ordre')->default(0);
             $table->boolean('is_active')->default(true);
@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         Schema::table('entities', function (Blueprint $table) {
-          $table->foreign('parent_uuid')
+          $table->foreign('parent_id')
               ->references('id')
               ->on('entities')
               ->onDelete('set null');

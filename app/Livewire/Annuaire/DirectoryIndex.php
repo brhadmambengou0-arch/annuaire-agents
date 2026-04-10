@@ -90,15 +90,15 @@ class DirectoryIndex extends Component
             ->with(['fonction', 'entity'])
             ->when($this->search, function ($q) {
                 $q->where(function ($q2) {
-                    $q2->where('nom', 'like', "%{$this->search}%")
-                       ->orWhere('prenom', 'like', "%{$this->search}%")
-                       ->orWhere('email', 'like', "%{$this->search}%")
-                       ->orWhere('matricule', 'like', "%{$this->search}%");
+                    $q2->where('nom', 'ilike', "%{$this->search}%")
+                       ->orWhere('prenom', 'ilike', "%{$this->search}%")
+                       ->orWhere('email', 'ilike', "%{$this->search}%")
+                       ->orWhere('matricule', 'ilike', "%{$this->search}%");
                 });
             })
             ->when($this->directionId, function ($q) {
                 $q->whereHas('entity', function ($e) {
-                    $e->where('parent_uuid', $this->directionId)
+                    $e->where('parent_id', $this->directionId)
                       ->orWhere('id', $this->directionId);
                 });
             })
@@ -125,7 +125,7 @@ class DirectoryIndex extends Component
     public function getEntitiesByDirectionProperty()
     {
         if ($this->selectedDirectionId) {
-            return Entity::where('parent_uuid', $this->selectedDirectionId)
+            return Entity::where('parent_id', $this->selectedDirectionId)
                         ->orWhere('id', $this->selectedDirectionId)
                         ->orderBy('nom')
                         ->get();
@@ -135,7 +135,7 @@ class DirectoryIndex extends Component
 
     public function getEntityTreeProperty()
     {
-        return Entity::whereNull('parent_uuid')
+        return Entity::whereNull('parent_id')
             ->with('children.children')
             ->get();
     }
@@ -186,7 +186,7 @@ class DirectoryIndex extends Component
 
         // Définir la direction basée sur l'entité
         if ($agent->entity) {
-            $this->selectedDirectionId = $agent->entity->parent_uuid ?? $agent->entity_id;
+            $this->selectedDirectionId = $agent->entity->parent_id ?? $agent->entity_id;
         }
 
         $this->showForm = true;
@@ -292,7 +292,7 @@ class DirectoryIndex extends Component
             'fonctions' => $this->fonctions,
             'allEntities' => $this->allEntities,
             'entityTree' => $this->entityTree,
-            'directions' => Entity::where('type','direction')->whereNull('parent_uuid')->orderBy('nom')->get(),
+            'directions' => Entity::where('type','direction')->whereNull('parent_id')->orderBy('nom')->get(),
             'services' => Entity::where('type','service')->orderBy('nom')->get(),
             ]);
     }

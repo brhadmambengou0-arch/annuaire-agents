@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Agent extends Model
 {
+
+   use HasUuids;
     // UUID
     protected $primaryKey = 'id';
     protected $keyType = 'string';
@@ -30,8 +33,8 @@ class Agent extends Model
         'nom',
         'prenom',
         'email',
-        'telephone_professionnel',
-        'telephone_prive',
+        'telephone',
+        'telephone_interne',
         'entity_id',
         'fonction_id',
         'bureau',

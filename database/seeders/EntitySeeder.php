@@ -30,25 +30,80 @@ class EntitySeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // 3. Créer le Service Étude et Développement (rattaché à la DA)
+        // 3. Direction des Affaires Générales
         Entity::create([
             'id' => (string) Str::uuid(),
             'nom' => 'Service Étude et Développement',
-            'code' => 'SED',
-            'type' => 'service',
-            'parent_uuid' => $da->id,
-            'ordre' => 1,
+            'code' => 'DAG',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 3,
             'is_active' => true,
         ]);
-
-        // 4. Créer le Service Maintenance (rattaché à la DA)
+         // 4. Direction de l'Audit de la Qualité et de la Stratégie Organisationnelle
         Entity::create([
             'id' => (string) Str::uuid(),
-            'nom' => 'Service Maintenance',
-            'code' => 'SM',
-            'type' => 'service',
-            'parent_uuid' => $da->id,
-            'ordre' => 2,
+            'nom' => 'Direction de l\'Audit de la Qualité et de la Stratégie Organisationnelle',
+            'code' => 'DAQSO',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 3,
+            'is_active' => true,
+        ]);
+           // 5. Direction de l'Audit de la Qualité et de la Stratégie Organisationnelle
+        Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction de l\'Audit de la Qualité et de la Stratégie Organisationnelle',
+            'code' => 'DAQSO',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 3,
+            'is_active' => true,
+        ]);
+                // 6. Direction des fréquences et de l'Audio vusuel
+        Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction des fréquences et Audio vusuel',
+            'code' => 'DFA',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 6,
+            'is_active' => true, 
+        ]);
+            Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction de la Communicationet et du Marcketing',
+            'code' => 'DCM',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 8,
+            'is_active' => true, 
+        ]);
+            $drh = Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction des Ressources Humaines',
+            'code' => 'DRH',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 9,
+            'is_active' => true, 
+        ]);
+           Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction Financière',
+            'code' => 'DF',
+            'type' => 'direction',
+            'parent_id' => $da->id,
+            'ordre' => 10,
+            'is_active' => true, 
+        ]);
+       // 3. Direction 
+        $dag = Entity::create([
+            'id' => (string) Str::uuid(),
+            'nom' => 'Direction des Affaires Générales',
+            'code' => 'DAG',
+            'type' => 'direction',
+            'ordre' => 3,
             'is_active' => true,
         ]);
     }
