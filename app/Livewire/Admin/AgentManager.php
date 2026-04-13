@@ -50,7 +50,7 @@ class AgentManager extends Component
         'form.matricule' => 'required|string|max:20|unique:agents,matricule',
         'form.nom' => 'required|string|max:100',
         'form.prenom' => 'required|string|max:100',
-        'form.email' => 'nullable|email|unique:agents,email',
+        'form.email' => 'required|email|unique:agents,email',
         'form.telephone_professionnel' => 'nullable|string|max:25',
         'form.telephone_prive' => 'nullable|string|max:10',
         'form.direction_id' => 'required|exists:entities,id',
@@ -66,6 +66,7 @@ class AgentManager extends Component
         'form.matricule.unique' => 'Ce matricule existe déjà.',
         'form.nom.required' => 'Le nom est obligatoire.',
         'form.prenom.required' => 'Le prénom est obligatoire.',
+        'form.email.required' => 'L\'email est obligatoire pour envoyer les identifiants de connexion.',
         'form.email.email' => 'L\'email n\'est pas valide.',
         'form.email.unique' => 'Cet email est déjà utilisé.',
         'form.direction_id.required' => 'La direction est obligatoire.',
@@ -118,29 +119,27 @@ class AgentManager extends Component
     public function generateMatricule()
     {
         if (!$this->editingAgent) {
-            // Générer un matricule incrémenté : chiffre + lettre
-            $lastAgent = Agent::orderBy('matricule', 'desc')->first();
-            $nextNumber = 1;
-            $nextLetter = 'A';
+            $matricules = Agent::whereNotNull('matricule')->pluck('matricule');
+            $maxSequence = -1;
 
-            if ($lastAgent && $lastAgent->matricule) {
-                // Extraire le numéro et la lettre du dernier matricule
-                preg_match('/(\d+)([A-Z])$/', $lastAgent->matricule, $matches);
-                if ($matches) {
-                    $number = (int)$matches[1];
-                    $letter = $matches[2];
-
-                    if ($letter === 'Z') {
-                        $nextNumber = $number + 1;
-                        $nextLetter = 'A';
-                    } else {
-                        $nextNumber = $number;
-                        $nextLetter = chr(ord($letter) + 1);
-                    }
+            foreach ($matricules as $matricule) {
+                if (preg_match('/^(\d+)([A-Z])$/i', $matricule, $matches)) {
+                    $number = (int) $matches[1];
+                    $letter = strtoupper($matches[2]);
+                    $sequence = ($number - 1) * 26 + (ord($letter) - ord('A'));
+                    $maxSequence = max($maxSequence, $sequence);
                 }
             }
 
-            $this->form['matricule'] = $nextNumber . $nextLetter;
+            if ($maxSequence >= 0) {
+                $nextSequence = $maxSequence + 1;
+                $nextNumber = intdiv($nextSequence, 26) + 1;
+                $nextLetter = chr(ord('A') + ($nextSequence % 26));
+                $this->form['matricule'] = $nextNumber . $nextLetter;
+                return;
+            }
+
+            $this->form['matricule'] = '1A';
         }
     }
 
@@ -223,23 +222,28 @@ class AgentManager extends Component
                 $agent->update(['photo_url' => $path]);
             }
 
-            // Créer le compte utilisateur avec mot de passe généré
             $generatedPassword = $this->generatePassword();
-            $user = User::create([
-                'uuid' => Str::uuid(),
-                'name' => $agent->nom_complet,
-                'email' => $agent->email,
-                'password' => Hash::make($generatedPassword),
-                'role' => 'agent',
-                'agent_id' => $agent->id,
-            ]);
+            $emailAlreadyUsed = User::where('email', $agent->email)->exists();
 
-            // Envoyer l'email d'invitation avec le mot de passe
-            try {
-                \Mail::to($agent->email)->send(new \App\Mail\AgentInvitation($agent, $generatedPassword));
-                session()->flash('message', 'Agent créé avec succès. Un email avec les identifiants a été envoyé.');
-            } catch (\Exception $e) {
-                session()->flash('message', 'Agent créé avec succès. Mot de passe généré : ' . $generatedPassword . ' (Erreur d\'envoi email)');
+            if ($emailAlreadyUsed) {
+                session()->flash('message', 'Agent créé avec succès. L\'email est déjà associé à un compte existant, le compte utilisateur n\'a pas été créé.');
+            } else {
+                User::create([
+                    'uuid' => Str::uuid(),
+                    'name' => $agent->nom_complet,
+                    'email' => $agent->email,
+                    'password' => Hash::make($generatedPassword),
+                    'role' => 'agent',
+                    'agent_id' => $agent->id,
+                ]);
+
+                // Envoyer l'email d'invitation avec le mot de passe
+                try {
+                    \Mail::to($agent->email)->send(new \App\Mail\AgentInvitation($agent, $generatedPassword));
+                    session()->flash('message', 'Agent créé avec succès. Un email avec les identifiants a été envoyé.');
+                } catch (\Exception $e) {
+                    session()->flash('message', 'Agent créé avec succès. Mot de passe généré : ' . $generatedPassword . ' (Erreur d\'envoi email)');
+                }
             }
         }
 

@@ -3,7 +3,6 @@
 namespace App\Livewire\Pages\Settings;
 
 use App\Concerns\ProfileValidationRules;
-use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -18,8 +17,6 @@ class Profile extends Component
 
     public string $name = '';
     public string $email = '';
-    public ?bool $confirmingUserDeletion = false;
-    public string $password = '';
 
     /**
      * Mount the component.
@@ -57,7 +54,7 @@ class Profile extends Component
     {
         $user = Auth::user();
 
-        if ($user->hasVerifiedEmail()) {
+        if (! $user instanceof MustVerifyEmail || $user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
 
             return;
@@ -72,6 +69,13 @@ class Profile extends Component
     public function hasUnverifiedEmail(): bool
     {
         return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+    }
+
+    #[Computed]
+    public function showDeleteUser(): bool
+    {
+        return ! Auth::user() instanceof MustVerifyEmail
+            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 
     /**

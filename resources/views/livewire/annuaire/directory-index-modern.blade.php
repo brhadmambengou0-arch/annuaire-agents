@@ -78,7 +78,7 @@
                     @if($agents->count() > 0)
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
                             @foreach($agents as $agent)
-                                <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; color: inherit; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; cursor: pointer;" wire:click="openDetail({{ $agent->id }})">
+                                <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; color: inherit; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 1rem; cursor: pointer;" wire:click="openDetail('{{ $agent->id }}')">
                                     <!-- AGENT HEADER -->
                                     <div>
                                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #0ea5e9, #0369a1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.2rem; margin-bottom: 1rem;">

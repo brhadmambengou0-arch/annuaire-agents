@@ -65,21 +65,19 @@ class DirectoryIndex extends Component
     public function updatingDirectionId()
     {
         $this->resetPage();
+        $this->entityId = null;
+        $this->fonctionId = null;
     }
 
     public function updatingEntityId()
     {
         $this->resetPage();
+        $this->fonctionId = null;
     }
 
     public function updatingFonctionId()
     {
         $this->resetPage();
-    }
-
-    public function updatingSelectedDirectionId()
-    {
-        $this->entityId = null; // Reset entity when direction changes
     }
 
     //  Données calculées
@@ -114,7 +112,32 @@ class DirectoryIndex extends Component
 
     public function getFonctionsProperty()
     {
-        return Fonction::orderBy('niveau')->get();
+        return Fonction::when($this->directionId, function ($query) {
+                $query->whereHas('agents.entity', function ($query) {
+                    $query->where('parent_id', $this->directionId)
+                          ->orWhere('id', $this->directionId);
+                });
+            })
+            ->when($this->entityId, function ($query) {
+                $query->whereHas('agents', function ($query) {
+                    $query->where('entity_id', $this->entityId);
+                });
+            })
+            ->orderBy('niveau')
+            ->get();
+    }
+
+    public function getServicesProperty()
+    {
+        if ($this->directionId) {
+            return Entity::where('parent_id', $this->directionId)
+                         ->orderBy('nom')
+                         ->get();
+        }
+
+        return Entity::where('type', 'service')
+                     ->orderBy('nom')
+                     ->get();
     }
 
     public function getAllEntitiesProperty()
@@ -293,7 +316,7 @@ class DirectoryIndex extends Component
             'allEntities' => $this->allEntities,
             'entityTree' => $this->entityTree,
             'directions' => Entity::where('type','direction')->whereNull('parent_id')->orderBy('nom')->get(),
-            'services' => Entity::where('type','service')->orderBy('nom')->get(),
+            'services' => $this->services,
             ]);
     }
 }

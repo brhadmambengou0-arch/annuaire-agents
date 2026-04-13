@@ -787,7 +787,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">Agents récemment ajoutés</div>
-                        <a href="{{ route('annuaire.index') }}" class="card-link">Voir tout →</a>
+                        <a href="{{ route('admin.agents') }}" class="card-link">Voir tout →</a>
                     </div>
                     <div class="recent-list">
                         @forelse($recent_agents as $agent)
@@ -855,10 +855,10 @@
                         <div class="card-header-title">Actions rapides</div>
                     </div>
                     <div class="actions-grid">
-                        <a href="{{ route('annuaire.index') }}" class="action-btn">
+                        <a href="{{ route('admin.agents') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
                             <div class="action-btn-label">Annuaire</div>
-                            <div class="action-btn-desc">Consulter les agents</div>
+                            <div class="action-btn-desc">Consulter la liste des agents</div>
                         </a>
                         <a href="{{ route('admin.entities') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
@@ -870,10 +870,10 @@
                             <div class="action-btn-label">Fonctions</div>
                             <div class="action-btn-desc">Référentiel postes</div>
                         </a>
-                        <a href="{{ route('annuaire.index') }}" class="action-btn">
+                        <a href="{{ route('admin.agents') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
-                            <div class="action-btn-label">Ajouter</div>
-                            <div class="action-btn-desc">Nouvel agent</div>
+                            <div class="action-btn-label">Ajouter un agent</div>
+                            <div class="action-btn-desc">Ouvrir le formulaire d'ajout</div>
                         </a>
                     </div>
                 </div>

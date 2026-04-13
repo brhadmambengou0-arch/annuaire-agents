@@ -39,6 +39,7 @@ class Agent extends Model
         'fonction_id',
         'bureau',
         'date_prise_fonction',
+        'photo_url',
         'is_active',
     ];
 

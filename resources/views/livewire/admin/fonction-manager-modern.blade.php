@@ -45,7 +45,7 @@
                                     {{ $fonction->agents()->where('is_active', true)->count() }}
                                 </td>
                                 <td style="padding: 1rem; text-align: center;">
-                                    <button wire:click="edit({{ $fonction->id }})" style="padding: 0.4rem 0.8rem; background: #e0f2fe; color: #0369a1; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; margin-right: 0.5rem;">
+                                    <button wire:click="openEdit('{{ $fonction->id }}')" style="padding: 0.4rem 0.8rem; background: #e0f2fe; color: #0369a1; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; margin-right: 0.5rem;">
                                          Éditer
                                     </button>
                                 </td>
