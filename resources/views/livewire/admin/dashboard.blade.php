@@ -935,5 +935,29 @@
     </div>
 </div>
 
+@if($showForm)
+<div style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999;">
+    <div style="background:white;border-radius:12px;padding:2rem;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+            <h2 style="font-size:1.2rem;font-weight:700;color:#0a1628;margin:0;">Ajouter un agent</h2>
+            <button wire:click="closeForm" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div style="grid-column:1/-1;"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Matricule *</label><input wire:model="matricule" type="text" placeholder="MAT001" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;">@error('matricule') <p style="color:#dc2626;font-size:0.75rem;">{{ $message }}</p> @enderror</div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Nom *</label><input wire:model="nom" type="text" placeholder="NOM" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;">@error('nom') <p style="color:#dc2626;font-size:0.75rem;">{{ $message }}</p> @enderror</div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Prénom *</label><input wire:model="prenom" type="text" placeholder="Prénom" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;">@error('prenom') <p style="color:#dc2626;font-size:0.75rem;">{{ $message }}</p> @enderror</div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Email</label><input wire:model="email" type="email" placeholder="email@aninf.ga" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;"></div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Téléphone</label><input wire:model="telephone" type="text" placeholder="+241 77 000 000" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;"></div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Bureau</label><input wire:model="bureau" type="text" placeholder="A-201" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;"></div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Entité *</label><select wire:model="entityId" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;background:#fff;"><option value="">-- Sélectionner --</option>@foreach($allEntities as $entity)<option value="{{ $entity->id }}">{{ $entity->nom }}</option>@endforeach</select>@error('entityId') <p style="color:#dc2626;font-size:0.75rem;">{{ $message }}</p> @enderror</div>
+            <div><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem;">Fonction *</label><select wire:model="fonctionIdForm" style="width:100%;padding:0.6rem;border:1px solid #e2e8f0;border-radius:7px;font-size:0.88rem;outline:none;background:#fff;"><option value="">-- Sélectionner --</option>@foreach($fonctions as $f)<option value="{{ $f->id }}">{{ $f->libelle }}</option>@endforeach</select>@error('fonctionIdForm') <p style="color:#dc2626;font-size:0.75rem;">{{ $message }}</p> @enderror</div>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:0.75rem;justify-content:flex-end;">
+            <button wire:click="closeForm" style="padding:0.6rem 1.2rem;border:1px solid #e2e8f0;border-radius:7px;cursor:pointer;background:#fff;color:#64748b;">Annuler</button>
+            <button wire:click="save" style="padding:0.6rem 1.4rem;background:#0d47a1;color:#fff;border:none;border-radius:7px;font-weight:600;cursor:pointer;">Créer l'agent</button>
+        </div>
+    </div>
+</div>
+@endif
 </x-app-layout>
 </div>
