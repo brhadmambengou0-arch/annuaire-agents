@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
                                    ]),
             'agents'          => Agent::with(['entity.parent', 'fonction'])
                                     ->where('is_active', true)->get(),
-            'directions'      => Entity::whereNull('parent_uuid')
+            'directions'      => Entity::whereNull('parent_id')
                                     ->where('is_active', true)->get(),
             'fonctions'       => Fonction::where('is_active', true)->get(),
         ]);

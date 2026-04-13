@@ -484,13 +484,13 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button wire:click="editAgent({{ $agent->id }})" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
+                        <button wire:click="editAgent('{{ $agent->id }}')" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             Modifier
                         </button>
-                        <button wire:click="toggleActive({{ $agent->id }})" class="btn-success" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
+                        <button wire:click="toggleActive('{{ $agent->id }}')" class="btn-success" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             {{ $agent->is_active ? 'Désactiver' : 'Activer' }}
                         </button>
-                        <button wire:click="deleteAgent({{ $agent->id }})"
+                        <button wire:click="deleteAgent('{{ $agent->id }}')"
                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet agent ?')"
                                 class="btn-danger"
                                 style="padding:0.4rem 0.8rem;font-size:0.75rem;">

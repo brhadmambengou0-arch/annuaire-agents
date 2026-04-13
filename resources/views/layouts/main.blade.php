@@ -42,12 +42,17 @@
                 <span class="text-xs font-medium px-3 py-1 rounded-full hidden sm:inline"
                       style="background:#e8f4fd;color:#0d6fa8;border:0.5px solid #b0d8f0;">Admin</span>
             @endif
-            <div class="flex items-center gap-2 text-sm" style="color:#4a7fa0;">
-                <div class="flex items-center justify-center rounded-full font-semibold text-xs text-white"
-                     style="width:32px;height:32px;background:#1a7fc1;flex-shrink:0;">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+            @php $userAgent = auth()->user()->agent; @endphp
+            <div id="user-avatar-wrapper" class="flex items-center gap-2 text-sm" style="color:#4a7fa0;">
+                <div id="user-avatar" class="flex items-center justify-center rounded-full font-semibold text-xs text-white shrink-0"
+                     style="width:32px;height:32px;background:#1a7fc1;">
+                    @if(optional($userAgent)->photo_url)
+                        <img id="user-avatar-img" src="{{ asset('storage/' . $userAgent->photo_url) }}" alt="Avatar" class="h-8 w-8 rounded-full object-cover shrink-0">
+                    @else
+                        <span id="user-avatar-initials">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</span>
+                    @endif
                 </div>
-                <span class="hidden md:inline">{{ auth()->user()->name }}</span>
+                <span id="user-name" class="hidden md:inline">{{ auth()->user()->name }}</span>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -145,6 +150,26 @@
     {{-- TOAST --}}
     <x-toast />
 
+    <script>
+        window.addEventListener('agent-profile-updated', (event) => {
+            const avatar = document.getElementById('user-avatar');
+            const name = document.getElementById('user-name');
+
+            if (!avatar) {
+                return;
+            }
+
+            if (event.detail.photoUrl) {
+                avatar.innerHTML = `<img id="user-avatar-img" src="${event.detail.photoUrl}" alt="Avatar" class="h-8 w-8 rounded-full object-cover shrink-0">`;
+            } else {
+                avatar.innerHTML = `<span id="user-avatar-initials">${event.detail.initials}</span>`;
+            }
+
+            if (name && event.detail.name) {
+                name.textContent = event.detail.name;
+            }
+        });
+    </script>
     @livewireScripts
 </body>
 </html>

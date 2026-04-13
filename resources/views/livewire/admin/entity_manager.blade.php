@@ -177,11 +177,11 @@
                             </span>
                         </td>
                         <td style="white-space:nowrap;">
-                            <button wire:click="openEdit({{ $entity->id }})" class="btn-sm btn-edit">
+                            <button wire:click="openEdit('{{ $entity->id }}')" class="btn-sm btn-edit">
                                 Modifier
                             </button>
                             @if($entity->agents_count == 0)
-                                <button wire:click="toggleActive({{ $entity->id }})"
+                                <button wire:click="toggleActive('{{ $entity->id }}')"
                                         onclick="return confirm('Confirmer cette action ?')"
                                         class="btn-sm {{ $entity->is_active ? 'btn-danger' : 'btn-success' }}">
                                     {{ $entity->is_active ? 'Désactiver' : 'Réactiver' }}

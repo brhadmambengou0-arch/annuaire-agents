@@ -15,7 +15,7 @@ class EntityManager extends Component
 
     // ── Propriétés du formulaire ──────────────────────────
     public bool $showModal = false;
-    public ?int $entityId  = null;
+    public ?string $entityId  = null;
 
     #[Validate('required|string|max:150')]
     public string $nom = '';
@@ -27,7 +27,7 @@ class EntityManager extends Component
     public string $type = 'direction';
 
     #[Validate('nullable|exists:entities,id')]
-    public ?int $parentId = null;
+    public ?string $parentId = null;
 
     #[Validate('nullable|string')]
     public string $description = '';
@@ -66,7 +66,7 @@ class EntityManager extends Component
         $this->showModal = true;
     }
 
-    public function openEdit(int $id): void
+    public function openEdit(string $id): void
     {
         $entity = Entity::findOrFail($id);
         $this->entityId    = $entity->id;
@@ -106,7 +106,7 @@ class EntityManager extends Component
                       'parentId', 'description', 'ordre']);
     }
 
-    public function toggleActive(int $id): void
+    public function toggleActive(string $id): void
     {
         $entity = Entity::findOrFail($id);
 

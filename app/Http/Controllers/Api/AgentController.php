@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAgentRequest;
 use App\Http\Requests\UpdateAgentRequest;
 use App\Models\Agent;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-use App\Mail\AgentCreatedMail;  
+use App\Mail\AgentCreatedMail;
 
-class AgentController extends controller
+class AgentController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
@@ -25,9 +28,9 @@ class AgentController extends controller
             ->when($request->direction_id, function ($q) use ($request) {
                 $q->whereHas('entity', function ($eq) use ($request) {
                     $eq->where('id', $request->direction_id)
-                       ->orWhere('parent_uuid', $request->direction_id)
+                       ->orWhere('parent_id', $request->direction_id)
                        ->orWhereHas('parent', fn($p) =>
-                           $p->where('parent_uuid', $request->direction_id)
+                           $p->where('parent_id', $request->direction_id)
                        );
                 });
             })
@@ -53,10 +56,27 @@ class AgentController extends controller
             $validated['nom'] = strtoupper($validated['nom']);
         }
 
+        if (User::where('email', $validated['email'])->exists()) {
+            return response()->json([
+                'message' => 'L\'email est déjà associé à un compte utilisateur.',
+                'errors' => ['email' => ['Cet email est déjà utilisé.']],
+            ], 422);
+        }
+
+        $password = $validated['password'] ?? Str::random(12);
+
         $agent = Agent::create($validated);
 
-        // Envoi du mail d'invitation
-        Mail::to($agent->email)->send(new AgentCreatedMail($agent, $validated['password']));
+        $user = User::create([
+            'uuid' => Str::uuid(),
+            'name' => $agent->nom_complet,
+            'email' => $agent->email,
+            'password' => Hash::make($password),
+            'role' => 'agent',
+            'agent_id' => $agent->id,
+        ]);
+
+        Mail::to($agent->email)->send(new AgentCreatedMail($agent, $password));
 
         return response()->json($agent->load(['entity', 'fonction']), 201);
     }

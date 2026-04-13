@@ -200,11 +200,11 @@
                             </span>
                         </td>
                         <td style="white-space:nowrap;">
-                            <button wire:click="openEdit({{ $fonction->id }})" class="btn-sm btn-edit">
+                            <button wire:click="openEdit('{{ $fonction->id }}')" class="btn-sm btn-edit">
                                 Modifier
                             </button>
                             @if($fonction->agents_count == 0)
-                                <button wire:click="toggleActive({{ $fonction->id }})"
+                                <button wire:click="toggleActive('{{ $fonction->id }}')"
                                         onclick="return confirm('Confirmer cette action ?')"
                                         class="btn-sm {{ $fonction->is_active ? 'btn-danger' : 'btn-success' }}">
                                     {{ $fonction->is_active ? 'Désactiver' : 'Réactiver' }}

@@ -15,7 +15,7 @@ class FonctionManager extends Component
 
     // ── Propriétés du formulaire ──────────────────────────
     public bool $showModal  = false;
-    public ?int $fonctionId = null;
+    public ?string $fonctionId = null;
 
     #[Validate('required|string|max:50')]
     public string $code = '';
@@ -47,7 +47,7 @@ class FonctionManager extends Component
         $this->showModal = true;
     }
 
-    public function openEdit(int $id): void
+    public function openEdit(string $id): void
     {
         $fonction = Fonction::findOrFail($id);
         $this->fonctionId  = $fonction->id;
@@ -84,19 +84,19 @@ class FonctionManager extends Component
         $this->reset(['fonctionId', 'code', 'libelle', 'niveau', 'description']);
     }
 
-    public function deactivate(int $id): void
+    public function toggleActive(string $id): void
     {
         $fonction = Fonction::findOrFail($id);
 
-        // Vérifie qu'aucun agent actif n'utilise cette fonction
-        if ($fonction->hasActiveAgents()) {
+        // Vérifie qu'aucun agent actif n'utilise cette fonction avant désactivation
+        if ($fonction->is_active && $fonction->hasActiveAgents()) {
             session()->flash('error',
                 'Impossible : des agents actifs utilisent cette fonction.');
             return;
         }
 
-        $fonction->update(['is_active' => false]);
-        session()->flash('success', 'Fonction désactivée.');
+        $fonction->update(['is_active' => ! $fonction->is_active]);
+        session()->flash('success', $fonction->is_active ? 'Fonction réactivée.' : 'Fonction désactivée.');
     }
 
     public function closeForm(): void

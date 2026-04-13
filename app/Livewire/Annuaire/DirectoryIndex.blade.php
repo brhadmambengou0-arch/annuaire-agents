@@ -299,12 +299,12 @@
                         </div>
                     </div>
                     <div class="agent-card-actions">
-                        <button wire:click="openDetail({{ $agent->id }})" class="btn-detail">
+                        <button wire:click="openDetail('{{ $agent->id }}')" class="btn-detail">
                             Voir la fiche
                         </button>
                         @auth
                             @if(auth()->user()->role === 'admin')
-                            <button wire:click="openEdit({{ $agent->id }})" class="btn-edit">
+                            <button wire:click="openEdit('{{ $agent->id }}')" class="btn-edit">
                                 Modifier
                             </button>
                             @endif
@@ -432,10 +432,10 @@
             @auth
                 @if(auth()->user()->role === 'admin')
                 <div style="margin-top:1.25rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-                    <button wire:click="openEdit({{ $selectedAgent->id }})" class="btn-sm btn-sm-primary">
+                    <button wire:click="openEdit('{{ $selectedAgent->id }}')" class="btn-sm btn-sm-primary">
                         Modifier cet agent
                     </button>
-                    <button wire:click="toggleActive({{ $selectedAgent->id }})"
+                    <button wire:click="toggleActive('{{ $selectedAgent->id }}')"
                             onclick="return confirm('Confirmer cette action ?')"
                             class="btn-sm {{ $selectedAgent->is_active ? 'btn-sm-danger' : 'btn-sm-success' }}">
                         {{ $selectedAgent->is_active ? 'Désactiver' : 'Réactiver' }}
