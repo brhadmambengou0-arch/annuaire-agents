@@ -273,7 +273,7 @@ class DirectoryIndex extends Component
                 'password' => bcrypt($tempPassword),
                 'role' => 'consultant', // rôle par défaut pour les agents
                 'agent_id' => $agent->id,
-            ]);
+             ]);
 
             // Envoyer l'email d'invitation
             try {
