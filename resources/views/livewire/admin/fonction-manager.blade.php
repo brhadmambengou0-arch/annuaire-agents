@@ -116,7 +116,7 @@
         <div class="page-header-inner">
             <div>
                 <h1>Référentiel des Fonctions</h1>
-                <div class="page-header-sub">Postes et niveaux hiérarchiques de l'institution</div>
+                <div class="page-header-sub"></div>
             </div>
             <button wire:click="openCreate" class="btn-primary">+ Nouvelle fonction</button>
         </div>
@@ -198,23 +198,24 @@
                             <span class="badge badge-{{ $fonction->is_active ? 'active' : 'inactive' }}">
                                 {{ $fonction->is_active ? 'Active' : 'Inactive' }}
                             </span>
-                        </td>
-                        <td style="white-space:nowrap;">
-                            <button wire:click="openEdit({{ $fonction->id }})" class="btn-sm btn-edit">
-                                Modifier
-                            </button>
-                            @if($fonction->agents_count == 0)
-                                <button wire:click="toggleActive({{ $fonction->id }})"
-                                        onclick="return confirm('Confirmer cette action ?')"
-                                        class="btn-sm {{ $fonction->is_active ? 'btn-danger' : 'btn-success' }}">
-                                    {{ $fonction->is_active ? 'Désactiver' : 'Réactiver' }}
-                                </button>
-                            @else
-                                <span style="font-size:0.72rem; color:#94a3b8; margin-left:0.4rem;">
-                                    (agents liés)
-                                </span>
-                            @endif
-                        </td>
+                  </td>
+<td style="white-space:nowrap;">
+    <button wire:click="openEdit('{{ $fonction->id }}')" class="btn-sm btn-edit">
+        Modifier
+    </button>
+
+    @if($fonction->agents_count == 0)
+        <button wire:click="toggleActive('{{ $fonction->id }}')"
+                onclick="return confirm('Confirmer cette action ?')"
+                class="btn-sm {{ $fonction->is_active ? 'btn-danger' : 'btn-success' }}">
+            {{ $fonction->is_active ? 'Désactiver' : 'Réactiver' }}
+        </button>
+    @else
+        <span style="font-size:0.72rem; color:#94a3b8; margin-left:0.4rem;">
+            (agents liés)
+        </span>
+    @endif
+</td>
                     </tr>
                     @empty
                     <tr>

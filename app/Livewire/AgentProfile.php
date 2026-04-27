@@ -13,6 +13,8 @@ class AgentProfile extends Component
 {
     use WithFileUploads;
 
+    public bool $hasAgent = false; // ✅ Ajout de la propriété manquante
+
     public $agent;
     public $email;
     public $telephone_professionnel;
@@ -47,23 +49,20 @@ class AgentProfile extends Component
     {
         $user = Auth::user();
 
-        // Vérification que l'utilisateur est bien connecté
         if (!$user) {
             session()->flash('error', 'Vous devez être connecté pour accéder à votre profil.');
             return redirect()->route('login');
         }
 
-        // Récupération de l'agent associé à l'utilisateur
         $this->agent = $user->agent;
 
         if ($this->agent) {
+            $this->hasAgent = true; // ✅ On passe à true uniquement si l'agent existe
             $this->email = $this->agent->email;
             $this->telephone_professionnel = $this->agent->telephone_professionnel;
             $this->telephone_prive = $this->agent->telephone_prive;
-        } else {
-            session()->flash('error', 'Aucun profil agent associé à votre compte. Veuillez contacter un administrateur.');
-            return redirect()->route('dashboard');
         }
+        // ✅ Plus de redirection forcée : la vue gère l'affichage si $hasAgent = false
     }
 
     public function updatedEmail()
@@ -78,18 +77,15 @@ class AgentProfile extends Component
 
     public function saveProfile()
     {
-        // Vérification que l'agent existe toujours
         if (!$this->agent) {
             session()->flash('error', 'Profil agent introuvable.');
             return redirect()->route('dashboard');
         }
 
-        // Validation avec règle unique qui ignore l'agent actuel
         $this->rules['email'] = 'required|email|unique:agents,email,' . $this->agent->id;
 
         $validated = $this->validate();
 
-        // Vérification du mot de passe actuel si on change le mot de passe
         if (!empty($validated['password'])) {
             if (!Hash::check($this->current_password, Auth::user()->password)) {
                 $this->addError('current_password', 'Le mot de passe actuel est incorrect.');
@@ -97,34 +93,30 @@ class AgentProfile extends Component
             }
         }
 
-        // Mise à jour des informations de l'agent
         $this->agent->update([
             'email' => $validated['email'],
             'telephone_professionnel' => $validated['telephone_professionnel'] ?? null,
             'telephone_prive' => $validated['telephone_prive'] ?? null,
         ]);
 
-        // Gestion de la photo de profil
         if ($this->photo) {
-            // Suppression de l'ancienne photo si elle existe
             if ($this->agent->photo_url) {
                 Storage::disk('public')->delete($this->agent->photo_url);
             }
 
-            // Sauvegarde de la nouvelle photo
             $path = $this->photo->store('photos', 'public');
             $this->agent->update(['photo_url' => $path]);
-            $this->photo = null; // Réinitialisation du champ photo
+            $this->photo = null;
         }
 
-        // Mise à jour du mot de passe utilisateur si fourni
-if (!empty($validated['password'])) {
-    Auth::user()->update([
+        if (!empty($validated['password'])) {
+    $user = Auth::user();
+    /** @var \App\Models\User $user */
+    $user->update([
         'password' => Hash::make($validated['password']),
     ]);
 }
 
-        // Réinitialisation des champs sensibles
         $this->current_password = '';
         $this->password = '';
         $this->password_confirmation = '';

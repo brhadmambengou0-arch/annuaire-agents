@@ -149,9 +149,14 @@
                         @else
                             <span class="badge badge-red">● Inactif</span>
                         @endif
-                        <button type="button" class="btn-profil" wire:click.stop="openDetail({{ $agent->id }})">
+                        <button type=<button type="button" class="btn-profil"
+                            wire:click.stop="openDetail('1702ce4e-1447-4aaf-816b-405e1e2c2248')">>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                             Voir profil
+
+
+                            
+                            
                         </button>
                     </div>
                 </div>

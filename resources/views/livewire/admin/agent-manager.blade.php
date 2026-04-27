@@ -1,404 +1,78 @@
 <div class="admin-container">
     <style>
-        .admin-container {
-            min-height: 100vh;
-            background: #f0f9ff;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .admin-header {
-            background: #0369a1;
-            color: white;
-            padding: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .admin-header h1 {
-            font-family: 'Sora', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .admin-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        .admin-content {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .action-bar {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .search-filters {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .form-group {
-            margin-bottom: 0;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.68rem 1rem;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.87rem;
-            color: #0f172a;
-            background: white;
-            transition: all 0.2s;
-            outline: none;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .form-input:focus, .form-select:focus {
-            border-color: #0ea5e9;
-            box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
-        }
-
-        .btn-primary {
-            background: #0ea5e9;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.68rem 1.5rem;
-            font-size: 0.87rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .btn-primary:hover {
-            background: #0284c7;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(14,165,233,0.3);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #64748b;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 0.68rem 1.5rem;
-            font-size: 0.87rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        .btn-success {
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .agents-table {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .table-header {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.9rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
-            gap: 1rem;
-        }
-
-        .table-row {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .table-row:last-child {
-            border-bottom: none;
-        }
-
-        .table-row:hover {
-            background: #f8fafc;
-        }
-
-        .agent-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .agent-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: #e0f2fe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #0369a1;
-            flex-shrink: 0;
-        }
-
-        .agent-details h4 {
-            margin: 0;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        .agent-details p {
-            margin: 0.25rem 0 0 0;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 2rem;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-family: 'Sora', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #64748b;
-            cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-            color: #374151;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-full {
-            grid-column: 1 / -1;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checkbox-group input {
-            width: 16px;
-            height: 16px;
-            accent-color: #0ea5e9;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .page-link {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #64748b;
-            transition: all 0.2s;
-        }
-
-        .page-link:hover, .page-link.active {
-            background: #0ea5e9;
-            color: white;
-            border-color: #0ea5e9;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .alert-success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
+        .admin-container { min-height: 100vh; background: #f0f9ff; font-family: 'DM Sans', sans-serif; }
+        .admin-header { background: #0369a1; color: white; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .admin-header h1 { font-family: 'Sora', sans-serif; font-size: 1.8rem; font-weight: 700; margin: 0; }
+        .admin-header p { margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.9rem; }
+        .admin-content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .action-bar { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .search-filters { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; align-items: end; }
+        .form-group { margin-bottom: 0; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem; }
+        .form-input, .form-select { width: 100%; padding: 0.68rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.87rem; color: #0f172a; background: white; transition: all 0.2s; outline: none; font-family: 'DM Sans', sans-serif; }
+        .form-input:focus, .form-select:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+        .btn-primary { background: #0ea5e9; color: white; border: none; border-radius: 10px; padding: 0.68rem 1.5rem; font-size: 0.87rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .btn-primary:hover { background: #0284c7; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+        .btn-secondary { background: white; color: #64748b; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 0.68rem 1.5rem; font-size: 0.87rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .btn-success { background: #10b981; color: white; border: none; border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; border: none; border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-danger:hover { background: #dc2626; }
+        .agents-table { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .table-header { background: #f8fafc; padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #374151; font-size: 0.9rem; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 1rem; }
+        .table-row { padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; align-items: center; gap: 1rem; }
+        .table-row:last-child { border-bottom: none; }
+        .table-row:hover { background: #f8fafc; }
+        .agent-info { display: flex; align-items: center; gap: 0.75rem; }
+        .agent-avatar { width: 40px; height: 40px; border-radius: 8px; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #0369a1; flex-shrink: 0; }
+        .agent-details h4 { margin: 0; font-size: 0.9rem; font-weight: 600; color: #0f172a; }
+        .agent-details p { margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b; }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-align: center; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-inactive { background: #fee2e2; color: #991b1b; }
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 2rem; }
+        .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 700; color: #0f172a; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; padding: 0.25rem; border-radius: 6px; transition: all 0.2s; }
+        .modal-close:hover { background: #f1f5f9; color: #374151; }
+        .modal-body { padding: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-full { grid-column: 1 / -1; }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
+        .checkbox-group input { width: 16px; height: 16px; accent-color: #0ea5e9; }
+        .pagination { display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem; }
+        .page-link { padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; text-decoration: none; color: #64748b; transition: all 0.2s; }
+        .page-link:hover, .page-link.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+        .alert { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         @media (max-width: 768px) {
-            .search-filters {
-                grid-template-columns: 1fr;
-            }
-
-            .table-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+            .search-filters { grid-template-columns: 1fr; }
+            .table-row { grid-template-columns: 1fr; gap: 0.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 
-    {{-- Header --}}
     <div class="admin-header">
         <h1>Gestion des Agents</h1>
         <p>Gérer les agents, leurs informations et leurs comptes utilisateur</p>
     </div>
 
     <div class="admin-content">
-        {{-- Messages --}}
+
         @if (session()->has('message'))
-            <div class="alert alert-success">
-                {{ session('message') }}
-            </div>
+            <div class="alert alert-success">{{ session('message') }}</div>
         @endif
 
-        {{-- Barre d'actions --}}
         <div class="action-bar">
             <div class="search-filters">
                 <div class="form-group">
                     <label class="form-label">Rechercher</label>
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Nom, prénom, email, matricule..." class="form-input">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Entité</label>
                     <select wire:model.live="selectedEntity" class="form-select">
@@ -408,7 +82,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Fonction</label>
                     <select wire:model.live="selectedFonction" class="form-select">
@@ -418,7 +91,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="form-group">
                     <button wire:click="createAgent" class="btn-primary">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;margin-right:0.5rem;">
@@ -430,7 +102,6 @@
             </div>
         </div>
 
-        {{-- Table des agents --}}
         <div class="agents-table">
             <div class="table-header">
                 <div>Agent</div>
@@ -484,6 +155,7 @@
                     </div>
 
                     <div class="action-buttons">
+                        {{-- ✅ UUID entre guillemets simples pour Livewire --}}
                         <button wire:click="editAgent('{{ $agent->id }}')" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             Modifier
                         </button>
@@ -491,7 +163,7 @@
                             {{ $agent->is_active ? 'Désactiver' : 'Activer' }}
                         </button>
                         <button wire:click="deleteAgent('{{ $agent->id }}')"
-                                wire:confirm="Êtes-vous sûr de vouloir supprimer cet agent ?"
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet agent ?')"
                                 class="btn-danger"
                                 style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             Supprimer
@@ -507,14 +179,12 @@
             @endforelse
         </div>
 
-        {{-- Pagination --}}
         @if($agents->hasPages())
             <div class="pagination">
                 {{ $agents->links() }}
             </div>
         @endif
 
-        {{-- Modal Formulaire --}}
         @if($showForm)
             <div class="modal-overlay" wire:click.self="closeForm">
                 <div class="modal-content">
@@ -522,7 +192,8 @@
                         <h2 class="modal-title">
                             {{ $editingAgent ? 'Modifier l\'agent' : 'Nouveau agent' }}
                         </h2>
-                        <button wire:click="closeForm" class="modal-close">&times;</button>
+                        {{-- ✅ closeForm fonctionne en Livewire 3 --}}
+                        <button type="button" wire:click="closeForm" class="modal-close">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -610,7 +281,7 @@
                                     <label class="form-label">Photo de profil</label>
                                     <input type="file" wire:model="photo" accept="image/*" class="form-input">
                                     @error('photo') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
-                                    <small style="color:#64748b;font-size:0.75rem;margin-top:0.25rem;display:block;">Formats acceptés : JPG, PNG, GIF. Taille max : 2MB</small>
+                                    <small style="color:#64748b;font-size:0.75rem;margin-top:0.25rem;display:block;"></small>
                                 </div>
 
                                 <div class="form-group form-full">
@@ -625,6 +296,7 @@
                                 <button type="submit" class="btn-primary" style="flex:1;">
                                     {{ $editingAgent ? 'Modifier' : 'Créer' }} l'agent
                                 </button>
+                                {{--  closeForm vide les champs ET ferme le modal --}}
                                 <button type="button" wire:click="closeForm" class="btn-secondary">
                                     Annuler
                                 </button>
@@ -634,5 +306,6 @@
                 </div>
             </div>
         @endif
+
     </div>
 </div>
