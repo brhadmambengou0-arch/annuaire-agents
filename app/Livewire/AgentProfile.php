@@ -21,6 +21,7 @@ class AgentProfile extends Component
     public $password;
     public $password_confirmation;
     public $photo;
+    public $hasAgent = true;
 
     protected $rules = [
         'email' => 'required|email|unique:agents,email',
@@ -47,6 +48,13 @@ class AgentProfile extends Component
     public function mount()
     {
         $this->agent = Auth::user()->agent;
+
+        // Vérifier que l'agent existe
+        if (!$this->agent) {
+            $this->hasAgent = false;
+            return;
+        }
+
         $this->email = $this->agent->email;
         $this->telephone_professionnel = $this->agent->telephone_professionnel;
         $this->telephone_prive = $this->agent->telephone_prive;

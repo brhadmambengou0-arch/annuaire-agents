@@ -2,6 +2,17 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Mon Profil</h2>
 
+        @if (!$hasAgent)
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <p>Votre profil agent n'a pas été trouvé. Veuillez contacter un administrateur.</p>
+            </div>
+            <div class="mt-4">
+                <a href="{{ route('agent.index') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Retour à l'annuaire
+                </a>
+            </div>
+        @else
+
         @if (session()->has('message'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('message') }}
@@ -12,20 +23,33 @@
             {{-- Photo de profil --}}
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Photo de profil</label>
-                <div class="flex items-center space-x-4">
-                    <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                        @if($agent->photo_url)
-                            <img src="{{ asset('storage/' . $agent->photo_url) }}" alt="Photo de profil" class="w-full h-full object-cover">
-                        @else
-                            <span class="text-2xl font-bold text-gray-500">
-                                {{ strtoupper(substr($agent->prenom, 0, 1) . substr($agent->nom, 0, 1)) }}
-                            </span>
+                <div class="flex items-start space-x-4">
+                    <div class="flex flex-col">
+                        <div class="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                            @if($photo)
+                                <img src="{{ $photo->temporaryUrl() }}" alt="Aperçu" class="w-full h-full object-cover">
+                            @elseif($agent->photo_url)
+                                <img src="{{ asset('storage/' . $agent->photo_url) }}" alt="Photo de profil" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-3xl font-bold text-gray-500">
+                                    {{ strtoupper(substr($agent->prenom, 0, 1) . substr($agent->nom, 0, 1)) }}
+                                </span>
+                            @endif
+                        </div>
+                        @if($photo)
+                            <button type="button" wire:click="$set('photo', null)" class="mt-2 text-xs text-red-500 hover:text-red-700">
+                                Annuler la sélection
+                            </button>
                         @endif
                     </div>
-                    <div>
-                        <input type="file" wire:model="photo" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        @error('photo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                        <p class="text-xs text-gray-500 mt-1">JPG, PNG ou GIF. Max 2MB.</p>
+                    <div class="flex-1">
+                        <label class="inline-block px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition font-medium text-sm">
+                            Sélectionner une photo
+                            <input type="file" wire:model="photo" accept="image/*" class="hidden">
+                        </label>
+                        @error('photo') <span class="text-red-500 text-sm block mt-2">{{ $message }}</span> @enderror
+                        <p class="text-xs text-gray-500 mt-2">JPG, PNG ou GIF. Max 2MB.</p>
+                        <p class="text-xs text-gray-400 mt-1">Format recommandé : carré (1:1)</p>
                     </div>
                 </div>
             </div>
@@ -93,5 +117,6 @@
                 </button>
             </div>
         </form>
+        @endif
     </div>
 </div>
