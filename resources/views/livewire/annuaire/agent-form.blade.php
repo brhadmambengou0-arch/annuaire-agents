@@ -11,7 +11,11 @@
         <div class="modal-box" @click.stop>
             <div class="modal-header">
                 <h5>{{ $agentId ? 'Modifier l\'agent' : 'Ajouter un agent' }}</h5>
-                <button @click="show = false" class="modal-close">×</button>
+                <button
+                    type="button"
+                    class="modal-close"
+                    @click="show = false; $wire.resetForm()"
+                >×</button>
             </div>
 
             <form wire:submit.prevent="save">
@@ -82,7 +86,11 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" @click="show = false" class="btn-ghost">Annuler</button>
+                    <button
+                        type="button"
+                        class="btn-ghost"
+                        @click="show = false; $wire.resetForm()"
+                    >Annuler</button>
                     <button type="submit" class="btn-primary">Enregistrer</button>
                 </div>
             </form>

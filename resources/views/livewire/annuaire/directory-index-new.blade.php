@@ -7,7 +7,7 @@
         </div>
         <div style="display: flex; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem; background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 1rem; flex: 1; min-width: 300px;">
-                <span style="color: #94a3b8; font-size: 1.2rem;">🔍</span>
+                <span style="color: #94a3b8; font-size: 1.2rem;"></span>
                 <input wire:model.live="search" type="text" placeholder="Rechercher un agent..." style="border: none; outline: none; flex: 1; font-size: 0.9rem; background: transparent;" />
             </div>
         </div>

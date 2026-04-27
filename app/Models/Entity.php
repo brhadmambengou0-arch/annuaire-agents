@@ -11,7 +11,6 @@ class Entity extends Model
 {
     protected $table = 'entities';
 
-    // UUID
     protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -32,7 +31,7 @@ class Entity extends Model
         'nom',
         'code',
         'type',
-        'parent_uuid',
+        'parent_id',      // ✅ était parent_id
         'description',
         'ordre',
         'is_active',
@@ -46,7 +45,6 @@ class Entity extends Model
         ];
     }
 
-    // ✅ CORRECTION ICI
     public function agents(): HasMany
     {
         return $this->hasMany(Agent::class, 'entity_id', 'id');
@@ -54,7 +52,7 @@ class Entity extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(Entity::class, 'parent_uuid', 'id')
+        return $this->hasMany(Entity::class, 'parent_id', 'id')  // ✅ était parent_id
                     ->where('is_active', true)
                     ->orderBy('ordre');
     }
@@ -66,13 +64,13 @@ class Entity extends Model
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Entity::class, 'parent_uuid', 'id');
+        return $this->belongsTo(Entity::class, 'parent_id', 'id');  // ✅ était parent_id
     }
 
     // SCOPES
     public function scopeRoots($query)
     {
-        return $query->whereNull('parent_uuid')
+        return $query->whereNull('parent_id')   // ✅ était parent_id
                      ->where('is_active', true)
                      ->orderBy('ordre');
     }

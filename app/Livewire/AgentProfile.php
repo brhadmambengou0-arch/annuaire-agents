@@ -21,10 +21,9 @@ class AgentProfile extends Component
     public $password;
     public $password_confirmation;
     public $photo;
-    public $hasAgent = true;
 
     protected $rules = [
-        'email' => 'required|email|unique:agents,email',
+        'email' => 'required|email',
         'telephone_professionnel' => 'nullable|string|max:25',
         'telephone_prive' => 'nullable|string|max:10',
         'current_password' => 'required_with:password',
@@ -35,7 +34,6 @@ class AgentProfile extends Component
     protected $messages = [
         'email.required' => 'L\'email est obligatoire.',
         'email.email' => 'L\'email n\'est pas valide.',
-        'email.unique' => 'Cet email est déjà utilisé.',
         'telephone_professionnel.max' => 'Le téléphone professionnel ne peut pas dépasser 25 caractères.',
         'telephone_prive.max' => 'Le téléphone privé ne peut pas dépasser 10 caractères.',
         'current_password.required_with' => 'Le mot de passe actuel est requis pour changer le mot de passe.',
@@ -47,17 +45,25 @@ class AgentProfile extends Component
 
     public function mount()
     {
-        $this->agent = Auth::user()->agent;
+        $user = Auth::user();
 
-        // Vérifier que l'agent existe
-        if (!$this->agent) {
-            $this->hasAgent = false;
-            return;
+        // Vérification que l'utilisateur est bien connecté
+        if (!$user) {
+            session()->flash('error', 'Vous devez être connecté pour accéder à votre profil.');
+            return redirect()->route('login');
         }
 
-        $this->email = $this->agent->email;
-        $this->telephone_professionnel = $this->agent->telephone_professionnel;
-        $this->telephone_prive = $this->agent->telephone_prive;
+        // Récupération de l'agent associé à l'utilisateur
+        $this->agent = $user->agent;
+
+        if ($this->agent) {
+            $this->email = $this->agent->email;
+            $this->telephone_professionnel = $this->agent->telephone_professionnel;
+            $this->telephone_prive = $this->agent->telephone_prive;
+        } else {
+            session()->flash('error', 'Aucun profil agent associé à votre compte. Veuillez contacter un administrateur.');
+            return redirect()->route('dashboard');
+        }
     }
 
     public function updatedEmail()
@@ -72,12 +78,18 @@ class AgentProfile extends Component
 
     public function saveProfile()
     {
-        // Validation personnalisée pour l'email unique (ignore l'agent actuel)
+        // Vérification que l'agent existe toujours
+        if (!$this->agent) {
+            session()->flash('error', 'Profil agent introuvable.');
+            return redirect()->route('dashboard');
+        }
+
+        // Validation avec règle unique qui ignore l'agent actuel
         $this->rules['email'] = 'required|email|unique:agents,email,' . $this->agent->id;
 
         $validated = $this->validate();
 
-        // Vérifier le mot de passe actuel si on change le mot de passe
+        // Vérification du mot de passe actuel si on change le mot de passe
         if (!empty($validated['password'])) {
             if (!Hash::check($this->current_password, Auth::user()->password)) {
                 $this->addError('current_password', 'Le mot de passe actuel est incorrect.');
@@ -85,33 +97,34 @@ class AgentProfile extends Component
             }
         }
 
-        // Mettre à jour l'agent
+        // Mise à jour des informations de l'agent
         $this->agent->update([
             'email' => $validated['email'],
-            'telephone_professionnel' => $validated['telephone_professionnel'],
-            'telephone_prive' => $validated['telephone_prive'],
+            'telephone_professionnel' => $validated['telephone_professionnel'] ?? null,
+            'telephone_prive' => $validated['telephone_prive'] ?? null,
         ]);
 
-        // Mettre à jour la photo si fournie
+        // Gestion de la photo de profil
         if ($this->photo) {
-            // Supprimer l'ancienne photo
+            // Suppression de l'ancienne photo si elle existe
             if ($this->agent->photo_url) {
                 Storage::disk('public')->delete($this->agent->photo_url);
             }
 
-            // Sauvegarder la nouvelle photo
+            // Sauvegarde de la nouvelle photo
             $path = $this->photo->store('photos', 'public');
             $this->agent->update(['photo_url' => $path]);
+            $this->photo = null; // Réinitialisation du champ photo
         }
 
-        // Mettre à jour le mot de passe si fourni
-        if (!empty($validated['password'])) {
-            Auth::user()->update([
-                'password' => Hash::make($validated['password']),
-            ]);
-        }
+        // Mise à jour du mot de passe utilisateur si fourni
+if (!empty($validated['password'])) {
+    Auth::user()->update([
+        'password' => Hash::make($validated['password']),
+    ]);
+}
 
-        // Reset des champs de mot de passe
+        // Réinitialisation des champs sensibles
         $this->current_password = '';
         $this->password = '';
         $this->password_confirmation = '';

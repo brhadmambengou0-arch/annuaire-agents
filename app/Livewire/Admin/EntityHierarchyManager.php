@@ -12,14 +12,14 @@ class EntityHierarchyManager extends Component
     public $form = [
         'nom' => '',
         'type' => 'direction',
-        'parent_uuid' => '',
+        'parent_id' => '',
         'is_active' => true,
     ];
 
     protected $rules = [
         'form.nom' => 'required|string|max:100',
         'form.type' => 'required|in:direction,service,departement',
-        'form.parent_uuid' => 'nullable|exists:entities,id',
+        'form.parent_id' => 'nullable|exists:entities,id',
         'form.is_active' => 'boolean',
     ];
 
@@ -28,8 +28,16 @@ class EntityHierarchyManager extends Component
         'form.nom.max' => 'Le nom ne peut pas dépasser 100 caractères.',
         'form.type.required' => 'Le type est obligatoire.',
         'form.type.in' => 'Type invalide.',
-        'form.parent_uuid.exists' => 'L\'entité parente n\'existe pas.',
+        'form.parent_id.exists' => 'L\'entité parente n\'existe pas.',
     ];
+
+    public function closeForm()
+    {
+        $this->showForm = false;
+        $this->editingEntity = null;
+        $this->form = ['nom' => '', 'type' => 'direction', 'parent_id' => '', 'is_active' => true];
+        $this->resetValidation();
+    }
 
     public function createEntity()
     {
@@ -44,7 +52,7 @@ class EntityHierarchyManager extends Component
         $this->form = [
             'nom' => $entity->nom,
             'type' => $entity->type,
-            'parent_uuid' => $entity->parent_uuid,
+            'parent_id' => $entity->parent_id,
             'is_active' => $entity->is_active,
         ];
         $this->showForm = true;
@@ -55,27 +63,27 @@ class EntityHierarchyManager extends Component
         $this->validate();
 
         // Validation métier : une direction ne peut pas avoir de parent
-        if ($this->form['type'] === 'direction' && $this->form['parent_uuid']) {
-            $this->addError('form.parent_uuid', 'Une direction ne peut pas avoir de parent.');
+        if ($this->form['type'] === 'direction' && $this->form['parent_id']) {
+            $this->addError('form.parent_id', 'Une direction ne peut pas avoir de parent.');
             return;
         }
 
         // Validation métier : un service doit avoir une direction comme parent
-        if ($this->form['type'] === 'service' && !$this->form['parent_uuid']) {
-            $this->addError('form.parent_uuid', 'Un service doit avoir une direction comme parent.');
+        if ($this->form['type'] === 'service' && !$this->form['parent_id']) {
+            $this->addError('form.parent_id', 'Un service doit avoir une direction comme parent.');
             return;
         }
 
         // Validation métier : un département doit avoir un service comme parent
         if ($this->form['type'] === 'departement') {
-            if (!$this->form['parent_uuid']) {
-                $this->addError('form.parent_uuid', 'Un département doit avoir un service comme parent.');
+            if (!$this->form['parent_id']) {
+                $this->addError('form.parent_id', 'Un département doit avoir un service comme parent.');
                 return;
             }
 
-            $parent = Entity::find($this->form['parent_uuid']);
+            $parent = Entity::find($this->form['parent_id']);
             if ($parent && $parent->type !== 'service') {
-                $this->addError('form.parent_uuid', 'Un département doit avoir un service comme parent.');
+                $this->addError('form.parent_id', 'Un département doit avoir un service comme parent.');
                 return;
             }
         }
@@ -121,7 +129,7 @@ class EntityHierarchyManager extends Component
         $this->form = [
             'nom' => '',
             'type' => 'direction',
-            'parent_uuid' => '',
+            'parent_id' => '',
             'is_active' => true,
         ];
         $this->resetValidation();

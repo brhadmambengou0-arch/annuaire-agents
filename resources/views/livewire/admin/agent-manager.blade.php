@@ -484,14 +484,14 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button wire:click="editAgent({{ $agent->id }})" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
+                        <button wire:click="editAgent('{{ $agent->id }}')" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             Modifier
                         </button>
-                        <button wire:click="toggleActive({{ $agent->id }})" class="btn-success" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
+                        <button wire:click="toggleActive('{{ $agent->id }}')" class="btn-success" style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             {{ $agent->is_active ? 'Désactiver' : 'Activer' }}
                         </button>
-                        <button wire:click="deleteAgent({{ $agent->id }})"
-                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet agent ?')"
+                        <button wire:click="deleteAgent('{{ $agent->id }}')"
+                                wire:confirm="Êtes-vous sûr de vouloir supprimer cet agent ?"
                                 class="btn-danger"
                                 style="padding:0.4rem 0.8rem;font-size:0.75rem;">
                             Supprimer
@@ -516,13 +516,13 @@
 
         {{-- Modal Formulaire --}}
         @if($showForm)
-            <div class="modal-overlay" wire:click.self="showForm = false">
+            <div class="modal-overlay" wire:click.self="closeForm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title">
                             {{ $editingAgent ? 'Modifier l\'agent' : 'Nouveau agent' }}
                         </h2>
-                        <button wire:click="showForm = false" class="modal-close">&times;</button>
+                        <button wire:click="closeForm" class="modal-close">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -625,7 +625,7 @@
                                 <button type="submit" class="btn-primary" style="flex:1;">
                                     {{ $editingAgent ? 'Modifier' : 'Créer' }} l'agent
                                 </button>
-                                <button type="button" wire:click="showForm = false" class="btn-secondary">
+                                <button type="button" wire:click="closeForm" class="btn-secondary">
                                     Annuler
                                 </button>
                             </div>

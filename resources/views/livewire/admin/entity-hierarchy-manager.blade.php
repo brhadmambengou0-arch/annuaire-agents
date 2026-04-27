@@ -425,12 +425,12 @@
                             <span class="status-badge {{ $direction->is_active ? 'status-active' : 'status-inactive' }}">
                                 {{ $direction->is_active ? 'Actif' : 'Inactif' }}
                             </span>
-                            <button wire:click="editEntity({{ $direction->id }})" class="btn-secondary">Modifier</button>
-                            <button wire:click="toggleActive({{ $direction->id }})" class="btn-success">
+                            <button wire:click="editEntity('{{ $direction->id }}')" class="btn-secondary">Modifier</button>
+                            <button wire:click="toggleActive('{{ $direction->id }}')" class="btn-success">
                                 {{ $direction->is_active ? 'Désactiver' : 'Activer' }}
                             </button>
-                            <button wire:click="deleteEntity({{ $direction->id }})"
-                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette direction ?')"
+                            <button wire:click="deleteEntity('{{ $direction->id }}')"
+                                    wire:confirm="Êtes-vous sûr de vouloir supprimer cette direction ?"
                                     class="btn-danger">
                                 Supprimer
                             </button>
@@ -458,12 +458,12 @@
                                         <span class="status-badge {{ $service->is_active ? 'status-active' : 'status-inactive' }}">
                                             {{ $service->is_active ? 'Actif' : 'Inactif' }}
                                         </span>
-                                        <button wire:click="editEntity({{ $service->id }})" class="btn-secondary">Modifier</button>
-                                        <button wire:click="toggleActive({{ $service->id }})" class="btn-success">
+                                        <button wire:click="editEntity('{{ $service->id }}')" class="btn-secondary">Modifier</button>
+                                        <button wire:click="toggleActive('{{ $service->id }}')" class="btn-success">
                                             {{ $service->is_active ? 'Désactiver' : 'Activer' }}
                                         </button>
-                                        <button wire:click="deleteEntity({{ $service->id }})"
-                                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')"
+                                        <button wire:click="deleteEntity('{{ $service->id }}')"
+                                                wire:confirm="Êtes-vous sûr de vouloir supprimer ce service ?"
                                                 class="btn-danger">
                                             Supprimer
                                         </button>
@@ -490,12 +490,12 @@
                                                     <span class="status-badge {{ $departement->is_active ? 'status-active' : 'status-inactive' }}">
                                                         {{ $departement->is_active ? 'Actif' : 'Inactif' }}
                                                     </span>
-                                                    <button wire:click="editEntity({{ $departement->id }})" class="btn-secondary">Modifier</button>
-                                                    <button wire:click="toggleActive({{ $departement->id }})" class="btn-success">
+                                                    <button wire:click="editEntity('{{ $departement->id }}')" class="btn-secondary">Modifier</button>
+                                                    <button wire:click="toggleActive('{{ $departement->id }}')" class="btn-success">
                                                         {{ $departement->is_active ? 'Désactiver' : 'Activer' }}
                                                     </button>
-                                                    <button wire:click="deleteEntity({{ $departement->id }})"
-                                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce département ?')"
+                                                    <button wire:click="deleteEntity('{{ $departement->id }}')"
+                                                            wire:confirm="Êtes-vous sûr de vouloir supprimer ce département ?"
                                                             class="btn-danger">
                                                         Supprimer
                                                     </button>
@@ -527,7 +527,7 @@
                         <h2 class="modal-title">
                             {{ $editingEntity ? 'Modifier l\'entité' : 'Nouvelle entité' }}
                         </h2>
-                        <button wire:click="showForm = false" class="modal-close">&times;</button>
+                        <button wire:click="closeForm" class="modal-close">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -591,7 +591,7 @@
                                 <button type="submit" class="btn-primary" style="flex:1;">
                                     {{ $editingEntity ? 'Modifier' : 'Créer' }} l'entité
                                 </button>
-                                <button type="button" wire:click="showForm = false" class="btn-secondary">
+                                <button type="button" wire:click="closeForm" class="btn-secondary">
                                     Annuler
                                 </button>
                             </div>

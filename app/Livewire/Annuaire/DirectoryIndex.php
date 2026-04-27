@@ -7,10 +7,6 @@ use Livewire\WithPagination;
 use App\Models\Agent;
 use App\Models\Entity;
 use App\Models\Fonction;
-use App\Models\User;
-use App\Mail\AgentInvitation;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class DirectoryIndex extends Component
 {
@@ -18,293 +14,105 @@ class DirectoryIndex extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    protected $listeners = [
-        'open-edit' => 'openEdit',
-    ];
-
-    // Recherche & filtres
-    public $search = '';
+    public $search      = '';
     public $directionId = null;
-    public $entityId = null;
-    public $fonctionId = null;
+    public $serviceId   = null;
+    public $fonctionId  = null;
 
-    // Modal
-    public $showDetail = false;
-    public $showForm = false;
+    public $services  = [];
+    public $fonctions = [];
 
-    // Agent sélectionné
+    public $showDetail    = false;
     public $selectedAgent = null;
-    public $agentId = null;
 
-    // Formulaire
-    public $matricule;
-    public $nom;
-    public $prenom;
-    public $email;
-    public $telephone;
-    public $telephone_interne;
-    public $bureau;
-    public $date_prise_fonction;
-    public $selectedDirectionId;
-    public $fonctionIdForm;
-
-    protected $rules = [
-        'matricule' => 'required|string|max:50',
-        'nom' => 'required|string|max:100',
-        'prenom' => 'required|string|max:100',
-        'email' => 'nullable|email',
-        'entityId' => 'required|exists:entities,id',
-        'fonctionIdForm' => 'required|exists:fonctions,id',
-    ];
-
-    // Reset pagination si recherche change
-    public function updatingSearch()
+    public function mount()
     {
+        $this->fonctions = Fonction::orderBy('libelle')->get();
+        $this->services  = collect();
+    }
+
+    public function updatedDirectionId()
+    {
+        $this->serviceId  = null;
+        $this->fonctionId = null;
         $this->resetPage();
+
+        if ($this->directionId) {
+            $this->services = Entity::where('parent_id', $this->directionId)
+                ->where('type', 'service')
+                ->where('is_active', true)
+                ->orderBy('nom')
+                ->get();
+
+            $fonctionIds = Agent::whereHas('entity', function ($q) {
+                $q->where('id', $this->directionId)
+                  ->orWhere('parent_id', $this->directionId);
+            })->pluck('fonction_id')->unique();
+
+            $this->fonctions = Fonction::whereIn('id', $fonctionIds)->orderBy('libelle')->get();
+
+            if ($this->fonctions->isEmpty()) {
+                $this->fonctions = Fonction::orderBy('libelle')->get();
+            }
+        } else {
+            $this->services  = collect();
+            $this->fonctions = Fonction::orderBy('libelle')->get();
+        }
     }
 
-    public function updatingDirectionId()
+    public function updatingServiceId()  { $this->resetPage(); }
+    public function updatingFonctionId() { $this->resetPage(); }
+    public function updatingSearch()     { $this->resetPage(); }
+
+    public function openDetail($id)
     {
-        $this->resetPage();
+        $this->selectedAgent = Agent::with(['fonction', 'entity.parent'])->findOrFail($id);
+        $this->showDetail    = true;
     }
 
-    public function updatingEntityId()
+    public function closeDetail()
     {
-        $this->resetPage();
+        $this->showDetail    = false;
+        $this->selectedAgent = null;
     }
 
-    public function updatingFonctionId()
+    public function render()
     {
-        $this->resetPage();
-    }
-
-    public function updatingSelectedDirectionId()
-    {
-        $this->entityId = null;
-    }
-
-    // =========================
-    // DONNÉES
-    // =========================
-
-    public function getAgentsProperty()
-    {
-        return Agent::query()
+        $agents = Agent::query()
             ->with(['fonction', 'entity'])
+            ->where('is_active', true)
             ->when($this->search, function ($q) {
                 $q->where(function ($q2) {
-                    $q2->where('nom', 'like', "%{$this->search}%")
-                       ->orWhere('prenom', 'like', "%{$this->search}%")
-                       ->orWhere('email', 'like', "%{$this->search}%")
-                       ->orWhere('matricule', 'like', "%{$this->search}%");
+                    $q2->where('nom',        'like', "%{$this->search}%")
+                       ->orWhere('prenom',   'like', "%{$this->search}%")
+                       ->orWhere('email',    'like', "%{$this->search}%")
+                       ->orWhere('matricule','like', "%{$this->search}%");
                 });
             })
-            ->when($this->directionId, function ($q) {
+            ->when($this->directionId && !$this->serviceId, function ($q) {
                 $q->whereHas('entity', function ($e) {
-                    $e->where('parent_uuid', $this->directionId)
-                      ->orWhere('id', $this->directionId);
+                    $e->where('id', $this->directionId)
+                      ->orWhere('parent_id', $this->directionId);
                 });
             })
-            ->when($this->entityId, function ($q) {
-                $q->where('entity_id', $this->entityId);
+            ->when($this->serviceId, function ($q) {
+                $q->where('entity_id', $this->serviceId);
             })
             ->when($this->fonctionId, function ($q) {
                 $q->where('fonction_id', $this->fonctionId);
             })
             ->orderBy('nom')
             ->paginate(24);
-    }
 
-    public function getFonctionsProperty()
-    {
-        return Fonction::orderBy('niveau')->get();
-    }
-
-    public function getAllEntitiesProperty()
-    {
-        return Entity::orderBy('nom')->get();
-    }
-
-    public function getEntitiesByDirectionProperty()
-    {
-        if ($this->selectedDirectionId) {
-            return Entity::where('parent_uuid', $this->selectedDirectionId)
-                        ->orWhere('id', $this->selectedDirectionId)
-                        ->orderBy('nom')
-                        ->get();
-        }
-        return collect();
-    }
-
-    public function getEntityTreeProperty()
-    {
-        return Entity::whereNull('parent_uuid')
-            ->with('children.children')
+        $directions = Entity::where('type', 'direction')
+            ->whereNull('parent_id')
+            ->where('is_active', true)
+            ->orderBy('nom')
             ->get();
-    }
 
-    // =========================
-    // ACTIONS
-    // =========================
-
-    public function resetFilters()
-    {
-        $this->reset(['search', 'directionId', 'entityId', 'fonctionId']);
-    }
-
-    // Détail
-    public function openDetail($id)
-    {
-        $this->selectedAgent = Agent::with(['fonction', 'entity.parent.parent'])->findOrFail($id);
-        $this->showDetail = true;
-    }
-
-    public function closeDetail()
-    {
-        $this->showDetail = false;
-        $this->selectedAgent = null;
-    }
-
-    // Création
-    public function openCreate()
-    {
-        $this->resetForm();
-        $this->showForm = true;
-    }
-
-    // Edition
-    public function openEdit($id)
-    {
-        $agent = Agent::with('entity.parent')->findOrFail($id);
-
-        $this->agentId = $agent->id;
-        $this->matricule = $agent->matricule;
-        $this->nom = $agent->nom;
-        $this->prenom = $agent->prenom;
-        $this->email = $agent->email;
-        $this->telephone = $agent->telephone;
-        $this->telephone_interne = $agent->telephone_interne;
-        $this->bureau = $agent->bureau;
-        $this->date_prise_fonction = $agent->date_prise_fonction;
-        $this->entityId = $agent->entity_id;
-        $this->fonctionIdForm = $agent->fonction_id;
-
-        if ($agent->entity) {
-            $this->selectedDirectionId = $agent->entity->parent_uuid ?? $agent->entity_id;
-        }
-
-        $this->showForm = true;
-    }
-
-    public function closeForm()
-    {
-        $this->showForm = false;
-        $this->resetForm();
-    }
-
-    public function resetForm()
-    {
-        $this->reset([
-            'agentId',
-            'matricule',
-            'nom',
-            'prenom',
-            'email',
-            'telephone',
-            'telephone_interne',
-            'bureau',
-            'date_prise_fonction',
-            'selectedDirectionId',
-            'entityId',
-            'fonctionIdForm',
-        ]);
-    }
-
-    // =========================
-    // SAUVEGARDE
-    // =========================
-
-    public function save()
-    {
-        $this->validate();
-
-        $agent = Agent::updateOrCreate(
-            ['id' => $this->agentId],
-            [
-                'matricule' => $this->matricule,
-                'nom' => $this->nom,
-                'prenom' => $this->prenom,
-                'email' => $this->email,
-                'telephone' => $this->telephone,
-                'telephone_interne' => $this->telephone_interne,
-                'bureau' => $this->bureau,
-                'date_prise_fonction' => $this->date_prise_fonction,
-                'entity_id' => $this->entityId,
-                'fonction_id' => $this->fonctionIdForm,
-            ]
-        );
-
-        // Création compte utilisateur automatique
-        if (empty($this->agentId) && !empty($agent->email)) {
-
-            $tempPassword = 'Temp' . rand(1000, 9999) . '!';
-
-            $user = User::firstOrCreate(
-                ['email' => $agent->email],
-                [
-                    'name' => $agent->prenom . ' ' . $agent->nom,
-                    'password' => bcrypt($tempPassword),
-                    'role' => 'consultant',
-                    'agent_id' => $agent->id,
-                ]
-            );
-
-            try {
-                Mail::to($agent->email)->send(new AgentInvitation($agent, $tempPassword));
-            } catch (\Exception $e) {
-                Log::error('Erreur envoi mail invitation', [
-                    'agent_id' => $agent->id,
-                    'email' => $agent->email,
-                    'error' => $e->getMessage()
-                ]);
-            }
-        }
-
-        $this->closeForm();
-
-        if (empty($this->agentId)) {
-            session()->flash('success',
-                'Agent créé avec succès ! ' .
-                ($agent->email ? 'Un compte utilisateur a été créé avec l\'email : ' . $agent->email : '')
-            );
-        } else {
-            session()->flash('success', 'Agent modifié avec succès.');
-        }
-    }
-
-    // Activer / désactiver
-    public function toggleActive($id)
-    {
-        $agent = Agent::findOrFail($id);
-        $agent->is_active = !$agent->is_active;
-        $agent->save();
-
-        $this->openDetail($id);
-    }
-
-    // =========================
-    // RENDER
-    // =========================
-
-    public function render()
-    {
         return view('livewire.annuaire.directory-index', [
-            'agents' => $this->agents,
-            'fonctions' => $this->fonctions,
-            'allEntities' => $this->allEntities,
-            'entityTree' => $this->entityTree,
-            'directions' => Entity::where('type','direction')->whereNull('parent_uuid')->orderBy('nom')->get(),
-            'services' => Entity::where('type','service')->orderBy('nom')->get(),
-        ]);
+            'agents'     => $agents,
+            'directions' => $directions,
+        ])->layout('components.app-layout');
     }
 }

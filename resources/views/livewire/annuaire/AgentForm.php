@@ -12,32 +12,32 @@ class AgentForm extends Component
 {
     public $agentId = null;
     public $form = [
-        'matricule' => '',
-        'nom' => '',
-        'prenom' => '',
-        'email' => '',
-        'telephone' => '',
+        'matricule'     => '',
+        'nom'           => '',
+        'prenom'        => '',
+        'email'         => '',
+        'telephone'     => '',
         'telephone_pro' => '',
-        'entity_id' => '',
-        'fonction_id' => '',
-        'is_active' => true,
+        'entity_id'     => '',
+        'fonction_id'   => '',
+        'is_active'     => true,
     ];
 
     protected $rules = [
-        'form.matricule' => 'required|string|max:50|unique:agents,matricule',
-        'form.nom' => 'required|string|max:100',
-        'form.prenom' => 'required|string|max:100',
-        'form.email' => 'required|email|max:255|unique:agents,email',
-        'form.telephone' => 'nullable|string|max:20',
-        'form.telephone_pro' => 'nullable|string|max:20',
-        'form.entity_id' => 'required|exists:entities,uuid',
-        'form.fonction_id' => 'required|exists:fonctions,id',
-        'form.is_active' => 'boolean',
+        'form.matricule'    => 'required|string|max:50|unique:agents,matricule',
+        'form.nom'          => 'required|string|max:100',
+        'form.prenom'       => 'required|string|max:100',
+        'form.email'        => 'required|email|max:255|unique:agents,email',
+        'form.telephone'    => 'nullable|string|max:20',
+        'form.telephone_pro'=> 'nullable|string|max:20',
+        'form.entity_id'    => 'required|exists:entities,uuid',
+        'form.fonction_id'  => 'required|exists:fonctions,id',
+        'form.is_active'    => 'boolean',
     ];
 
     protected $listeners = [
         'open-create' => 'openCreate',
-        'open-edit' => 'openEdit',
+        'open-edit'   => 'openEdit',
     ];
 
     public function openCreate()
@@ -52,21 +52,38 @@ class AgentForm extends Component
         $agent = Agent::where('uuid', $agentId)->firstOrFail();
         $this->agentId = $agentId;
         $this->form = [
-            'matricule' => $agent->matricule,
-            'nom' => $agent->nom,
-            'prenom' => $agent->prenom,
-            'email' => $agent->email,
-            'telephone' => $agent->telephone,
+            'matricule'     => $agent->matricule,
+            'nom'           => $agent->nom,
+            'prenom'        => $agent->prenom,
+            'email'         => $agent->email,
+            'telephone'     => $agent->telephone,
             'telephone_pro' => $agent->telephone_pro,
-            'entity_id' => $agent->entity_id,
-            'fonction_id' => $agent->fonction_id,
-            'is_active' => $agent->is_active,
+            'entity_id'     => $agent->entity_id,
+            'fonction_id'   => $agent->fonction_id,
+            'is_active'     => $agent->is_active,
         ];
         $this->dispatch('show-modal');
     }
 
+    /**
+     * Ferme le modal et réinitialise tous les champs.
+     * Appelé par le bouton Annuler et la croix (×) du modal.
+     */
+    public function annuler()
+    {
+        $this->resetForm();
+        $this->dispatch('hide-modal');
+    }
+
     public function save()
     {
+        // Ajuste la règle unique pour ignorer l'agent en cours de modification
+        if ($this->agentId) {
+            $agent = Agent::where('uuid', $this->agentId)->firstOrFail();
+            $this->rules['form.matricule'] = 'required|string|max:50|unique:agents,matricule,' . $agent->id;
+            $this->rules['form.email']     = 'required|email|max:255|unique:agents,email,' . $agent->id;
+        }
+
         $this->validate();
 
         if ($this->agentId) {
@@ -87,8 +104,19 @@ class AgentForm extends Component
 
     public function resetForm()
     {
-        $this->reset('form');
-        $this->form['is_active'] = true;
+        $this->agentId = null;
+        $this->form = [
+            'matricule'     => '',
+            'nom'           => '',
+            'prenom'        => '',
+            'email'         => '',
+            'telephone'     => '',
+            'telephone_pro' => '',
+            'entity_id'     => '',
+            'fonction_id'   => '',
+            'is_active'     => true,
+        ];
+        $this->resetValidation();
     }
 
     public function render()
