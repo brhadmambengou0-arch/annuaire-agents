@@ -40,6 +40,7 @@
                 <a href="{{ route('admin.agents') }}" class="nav-link {{ request()->routeIs('admin.agents') ? 'active' : '' }}">Agents</a>
                 <a href="{{ route('admin.entities') }}" class="nav-link {{ request()->routeIs('admin.entities') ? 'active' : '' }}">Entités</a>
                 <a href="{{ route('admin.fonctions') }}" class="nav-link {{ request()->routeIs('admin.fonctions') ? 'active' : '' }}">Fonctions</a>
+                <a href="{{ route('agent.profile') }}" class="nav-link {{ request()->routeIs('agent.profile') ? 'active' : '' }}">Mon profil</a>
             @else
                 <div class="nav-divider"></div>
                 <a href="{{ route('agent.profile') }}" class="nav-link {{ request()->routeIs('agent.profile') ? 'active' : '' }}">Mon profil</a>

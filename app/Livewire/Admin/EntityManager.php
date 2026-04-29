@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Entity;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Validate;
@@ -43,7 +44,7 @@ class EntityManager extends Component
                      ->orderBy('ordre')
                      ->paginate(12);
     }
-
+    #[Computed]
     public function getParentsProperty()
     {
         return Entity::where('is_active', true)
@@ -131,7 +132,7 @@ class EntityManager extends Component
     {
         return view('livewire.admin.entity_manager', [
             'entities' => $this->getEntitiesProperty(),
-            'parents'  => $this->getParentsProperty(),
+            // 'parents'  => $this->getParentsProperty(),
         ]);
     }
 }

@@ -882,6 +882,11 @@
                             <div class="action-btn-label">Entités</div>
                             <div class="action-btn-desc">Gérer les structures</div>
                         </a>
+                        <a href="{{ route('agent.profile') }}" class="action-btn">
+                            <div class="action-btn-icon"></div>
+                            <div class="action-btn-label">Mon Profil</div>
+                            <div class="action-btn-desc">Gérer mon profil</div>
+                        </a>
                         <a href="{{ route('admin.fonctions') }}" class="action-btn">
                             <div class="action-btn-icon"></div>
                             <div class="action-btn-label">Fonctions</div>

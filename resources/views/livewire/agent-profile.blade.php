@@ -734,7 +734,7 @@
                             @error('photo')
                                 <div class="form-error" style="margin-top:0.4rem; text-align:center;">{{ $message }}</div>
                             @enderror
-                            <div class="photo-preview-hint">JPG, PNG ou GIF · Max 2 MB · Format 1:1 recommandé</div>
+                            <div class="photo-preview-hint"></div>
                             @if($photo)
                                 <button type="button" wire:click="$set('photo', null)" class="photo-cancel-btn">
                                     ✕ Annuler la sélection

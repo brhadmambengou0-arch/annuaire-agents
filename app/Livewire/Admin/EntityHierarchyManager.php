@@ -12,12 +12,14 @@ class EntityHierarchyManager extends Component
     public $form = [
         'nom' => '',
         'type' => 'direction',
+         'code' => '',
         'parent_id' => '',
         'is_active' => true,
     ];
 
     protected $rules = [
         'form.nom' => 'required|string|max:100',
+              'form.code' => 'required|string|max:100|unique:entities,code',
         'form.type' => 'required|in:direction,service,departement',
         'form.parent_id' => 'nullable|exists:entities,id',
         'form.is_active' => 'boolean',
@@ -26,6 +28,9 @@ class EntityHierarchyManager extends Component
     protected $messages = [
         'form.nom.required' => 'Le nom est obligatoire.',
         'form.nom.max' => 'Le nom ne peut pas dépasser 100 caractères.',
+        'form.code.required' => 'Le code est obligatoire.',
+        'form.code.max' => 'Le code ne peut pas dépasser 100 caractères.',
+        'form.code.exists' => 'Le code existe déjà.',
         'form.type.required' => 'Le type est obligatoire.',
         'form.type.in' => 'Type invalide.',
         'form.parent_id.exists' => 'L\'entité parente n\'existe pas.',
@@ -51,6 +56,7 @@ class EntityHierarchyManager extends Component
         $this->editingEntity = $entity;
         $this->form = [
             'nom' => $entity->nom,
+            'code' => $entity->code,
             'type' => $entity->type,
             'parent_id' => $entity->parent_id,
             'is_active' => $entity->is_active,
@@ -89,10 +95,10 @@ class EntityHierarchyManager extends Component
         }
 
         if ($this->editingEntity) {
-            $this->editingEntity->update($this->form);
+            $data=$this->form;$data['parent_id']=$data['parent_id']?:null;$this->editingEntity->update($data);
             session()->flash('message', 'Entité modifiée avec succès.');
         } else {
-            Entity::create($this->form);
+$data=$this->form;$data['parent_id']=$data['parent_id']?:null;Entity::create($data);
             session()->flash('message', 'Entité créée avec succès.');
         }
 
@@ -124,7 +130,7 @@ class EntityHierarchyManager extends Component
         session()->flash('message', 'Statut de l\'entité mis à jour.');
     }
 
-    private function resetForm()
+    public function updatedFormType():void{$this->form['parent_id']='';}public function getParentOptionsProperty(){return match($this->form['type']??''){ 'service'=>\App\Models\Entity::where('type','direction')->where('is_active',true)->orderBy('nom')->get(),'departement'=>\App\Models\Entity::where('type','service')->where('is_active',true)->orderBy('nom')->get(),default=>collect(),};}private function resetForm()
     {
         $this->form = [
             'nom' => '',
@@ -150,6 +156,8 @@ class EntityHierarchyManager extends Component
             ->whereIn('type', ['direction', 'service'])
             ->orderBy('nom')
             ->get();
+
+           
 
         return view('livewire.admin.entity-hierarchy-manager', [
             'directions' => $directions,

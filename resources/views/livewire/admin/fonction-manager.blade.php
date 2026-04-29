@@ -168,7 +168,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($this->fonctions as $fonction)
+                    @forelse($fonctions as $fonction)
                     <tr wire:key="fonction-{{ $fonction->id }}">
                         <td>
                             <div class="fonction-name">{{ $fonction->libelle }}</div>
@@ -206,7 +206,7 @@
 
     @if($fonction->agents_count == 0)
         <button wire:click="toggleActive('{{ $fonction->id }}')"
-                onclick="return confirm('Confirmer cette action ?')"
+                wire:confirm="Confirmer cette action ?"
                 class="btn-sm {{ $fonction->is_active ? 'btn-danger' : 'btn-success' }}">
             {{ $fonction->is_active ? 'Désactiver' : 'Réactiver' }}
         </button>
@@ -228,7 +228,7 @@
 
         {{-- Pagination --}}
         <div style="margin-top:1rem;">
-            {{ $this->fonctions->links() }}
+            {{ $fonctions->links() }}
         </div>
 
     </div>

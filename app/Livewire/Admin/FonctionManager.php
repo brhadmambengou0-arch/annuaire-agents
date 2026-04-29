@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Livewire\Admin;
-
 use App\Models\Fonction;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -10,44 +8,31 @@ use Livewire\Attributes\Validate;
 class FonctionManager extends Component
 {
     use WithPagination;
-
     protected $paginationTheme = 'tailwind';
 
-    // ── Propriétés du formulaire ──────────────────────────
     public bool $showModal  = false;
-    public ?int $fonctionId = null;
+    public ?string $fonctionId = null;
+    public string $search = '';
+    public string $filterNiveau = '';
+    public string $filterActif = '';
 
     #[Validate('required|string|max:50')]
     public string $code = '';
-
     #[Validate('required|string|max:150')]
     public string $libelle = '';
-
     #[Validate('required|integer|min:1|max:6')]
     public int $niveau = 1;
-
     #[Validate('nullable|string')]
     public string $description = '';
-
-    public function getEditIdProperty()
-    {
-        return $this->fonctionId;
-    }
-
-    public function getFonctionsProperty()
-    {
-        return Fonction::orderBy('libelle')->paginate(12);
-    }
-
-    // ── Actions ───────────────────────────────────────────
 
     public function openCreate(): void
     {
         $this->reset(['fonctionId', 'code', 'libelle', 'niveau', 'description']);
+        $this->niveau = 1;
         $this->showModal = true;
     }
 
-    public function openEdit(int $id): void
+    public function openEdit(string $id): void
     {
         $fonction = Fonction::findOrFail($id);
         $this->fonctionId  = $fonction->id;
@@ -61,54 +46,56 @@ class FonctionManager extends Component
     public function save(): void
     {
         $this->validate();
-
         $data = [
             'libelle'     => $this->libelle,
             'niveau'      => $this->niveau,
             'description' => $this->description,
-            'is_active'   => true,
         ];
-
         if ($this->fonctionId) {
-            // Modification — le code est immuable
             Fonction::findOrFail($this->fonctionId)->update($data);
             session()->flash('success', 'Fonction modifiée avec succès.');
         } else {
-            // Création — le code est requis et unique
             $data['code'] = strtoupper($this->code);
+            $data['is_active'] = true;
             Fonction::create($data);
             session()->flash('success', 'Fonction créée avec succès.');
         }
-
         $this->showModal = false;
         $this->reset(['fonctionId', 'code', 'libelle', 'niveau', 'description']);
+        $this->niveau = 1;
     }
 
-    public function deactivate(int $id): void
+    public function toggleActive(string $id): void
     {
         $fonction = Fonction::findOrFail($id);
-
-        // Vérifie qu'aucun agent actif n'utilise cette fonction
-        if ($fonction->hasActiveAgents()) {
-            session()->flash('error',
-                'Impossible : des agents actifs utilisent cette fonction.');
-            return;
-        }
-
-        $fonction->update(['is_active' => false]);
-        session()->flash('success', 'Fonction désactivée.');
+        $fonction->update(['is_active' => !$fonction->is_active]);
+        session()->flash('success', 'Statut mis à jour.');
     }
 
     public function closeForm(): void
     {
         $this->showModal = false;
         $this->reset(['fonctionId', 'code', 'libelle', 'niveau', 'description']);
+        $this->niveau = 1;
     }
 
     public function render()
     {
-        return view('livewire.admin.fonction-manager', [
-            'fonctions' => Fonction::orderBy('libelle')->get(),
-        ]);
+        $fonctions = Fonction::query()
+            ->when($this->search, fn($q) =>
+                $q->where('libelle', 'like', "%{$this->search}%")
+                  ->orWhere('code', 'like', "%{$this->search}%")
+            )
+            ->when($this->filterNiveau, fn($q) =>
+                $q->where('niveau', $this->filterNiveau)
+            )
+            ->when($this->filterActif !== '', fn($q) =>
+                $q->where('is_active', (bool) $this->filterActif)
+            )
+            ->orderBy('niveau')
+            ->orderBy('libelle')
+            ->paginate(12);
+
+        return view('livewire.admin.fonction-manager', compact('fonctions'));
     }
 }

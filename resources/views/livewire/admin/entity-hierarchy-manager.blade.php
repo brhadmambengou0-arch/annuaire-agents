@@ -372,7 +372,7 @@
 
     {{-- Header --}}
     <div class="admin-header">
-        <h1>I Entités</h1>
+        <h1>Entités</h1>
         <p>Gérer les directions, services et départements</p>
     </div>
 
@@ -531,13 +531,18 @@
                     </div>
 
                     <div class="modal-body">
+
                         <form wire:submit.prevent="saveEntity">
                             <div class="form-group">
                                 <label class="form-label">Nom</label>
-                                <input type="text" wire:model="form.nom" class="form-input">
+                                <input type="text" wire:model.live="form.nom" class="form-input">
                                 @error('form.nom') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
                             </div>
-
+                            <div class="form-group">
+                                <label class="form-label">Code</label>
+                                <input type="text" wire:model.live="form.code" class="form-input">
+                                @error('form.code') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
+                            </div>
                             <div class="form-group">
                                 <label class="form-label">Type</label>
                                 <select wire:model.live="form.type" class="form-select">
@@ -548,36 +553,32 @@
                                 @error('form.type') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="form-group" wire:ignore>
+                            <div class="form-group">
                                 <label class="form-label">
                                     Entité parente
                                     @if($form['type'] === 'direction')
-                                        <small style="color:#64748b;font-weight:400;">(non applicable pour les directions)</small>
+                                        <small style="color:#64748b;font-weight:400;"></small>
                                     @elseif($form['type'] === 'service')
                                         <small style="color:#64748b;font-weight:400;">(doit être une direction)</small>
                                     @else
                                         <small style="color:#64748b;font-weight:400;">(doit être un service)</small>
                                     @endif
                                 </label>
-                                <select wire:model="form.parent_uuid" class="form-select" {{ $form['type'] === 'direction' ? 'disabled' : '' }}>
-                                    <option value="">
-                                        @if($form['type'] === 'direction')
-                                            Aucune (direction racine)
-                                        @elseif($form['type'] === 'service')
-                                            Sélectionner une direction
-                                        @else
-                                            Sélectionner un service
-                                        @endif
-                                    </option>
-                                    @foreach($availableParents as $parent)
-                                        @if($form['type'] === 'service' && $parent->type === 'direction')
-                                            <option value="{{ $parent->id }}">{{ $parent->nom }} (Direction)</option>
-                                        @elseif($form['type'] === 'departement' && $parent->type === 'service')
-                                            <option value="{{ $parent->id }}">{{ $parent->nom }} (Service)</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                @error('form.parent_uuid') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
+                                @if($form['type'] === 'direction')
+                                    <select class="form-select" disabled>
+                                        <option>Aucune (direction racine)</option>
+                                    </select>
+                                @else
+                                    <select wire:model.live="form.parent_id" class="form-select">
+                                        <option value="">
+                                            {{ $form['type'] === 'service' ? 'Sélectionner une direction' : 'Sélectionner un service' }}
+                                        </option>
+                                        @foreach($this->parentOptions as $parent)
+                                            <option value="{{ $parent->id }}">{{ $parent->code }} - {{ $parent->nom }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('form.parent_id') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
+                                @endif
                             </div>
 
                             <div class="form-group">

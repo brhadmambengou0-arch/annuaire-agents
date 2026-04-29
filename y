@@ -63,28 +63,74 @@
     @media (max-width: 600px) { .filters-grid { grid-template-columns: 1fr; } .agents-grid { grid-template-columns: 1fr; } .ann-body { padding: 1rem; } }
 </style>
 <style>
-.db-hero { background: #0a1628; position: relative; overflow: hidden; padding: 2.5rem 2rem 5rem; }
-.db-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(13,71,161,0.55) 0%, transparent 70%); }
-.db-hero-inner { max-width: 1400px; margin: 0 auto; position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.db-hero-emblem { width: 52px; height: 52px; background: linear-gradient(135deg, #00bcd4, #1976d2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; color: #fff; }
+.db-hero {
+    background: #0a1628;
+    position: relative;
+    overflow: hidden;
+    padding: 2.5rem 2rem 5rem;
+}
+.db-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(13,71,161,0.55) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(0,188,212,0.18) 0%, transparent 60%);
+}
+.db-hero::after {
+    content: 'ANNUAIRE';
+    position: absolute;
+    right: -1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-size: 9rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.03);
+    pointer-events: none;
+}
+.db-hero-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.db-hero-emblem {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #00bcd4, #1976d2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800; color: #fff;
+    box-shadow: 0 4px 16px rgba(0,188,212,0.35);
+}
 .ann-body { max-width: 1400px; margin: -2.5rem auto 0; padding: 0 1.5rem 3rem; position: relative; z-index: 10; }
+@media(max-width: 640px) { .db-hero { padding: 1.5rem 1rem 4rem; } .db-hero-center { display: none; } }
 </style>
+
 <div class="db-hero">
     <div class="db-hero-inner">
         <div style="display:flex;align-items:center;gap:1rem;">
             <div class="db-hero-emblem">AN</div>
             <div>
-                <div style="font-size:1rem;font-weight:700;color:#fff;">ANINF</div>
-                <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);">Agence Nationale des Infrastructures Numériques et des Fréquences</div>
+                <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;letter-spacing:0.08em;">ANINF</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);max-width:320px;line-height:1.3;">Agence Nationale des Infrastructures Numériques et des Fréquences</div>
             </div>
         </div>
         <div style="text-align:center;flex:1;">
-            <div style="font-size:1.5rem;font-weight:800;color:#fff;">Annuaire des Agents</div>
-            <div style="font-size:0.82rem;color:rgba(255,255,255,0.55);margin-top:0.3rem;">Consultez la liste complète des agents de lANINF</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;">Annuaire des Agents</div>
+            <div style="font-size:0.82rem;color:rgba(255,255,255,0.55);margin-top:0.3rem;">Consultez la liste complète des agents de l'ANINF</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem;">
-            <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:0.35rem 0.9rem;border-radius:20px;font-size:0.78rem;font-weight:600;">Annuaire</div>
-            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">{{ now()->translatedFormat("l d F Y") }}</div>
+            <div style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:0.35rem 0.9rem;border-radius:20px;font-size:0.78rem;font-weight:600;">
+                <span style="width:7px;height:7px;background:#00bcd4;border-radius:50%;display:inline-block;"></span>
+                Annuaire
+            </div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);">{{ now()->translatedFormat('l d F Y') }}</div>
         </div>
     </div>
 </div>
@@ -100,8 +146,7 @@
                     @endforeach
                 </select>
             </div>
-           @if($directionId)
-            <div class="filter-group">
+             <div class="filter-group">
                 <label>Service</label>
                 <select wire:model.live="serviceId" class="f-select" {{ $services->isEmpty() ? 'disabled' : '' }}>
                     <option value="">{{ $directionId ? 'Tous les services' : 'Choisir une direction' }}</option>
@@ -109,8 +154,8 @@
                         <option value="{{ $svc->id }}">{{ $svc->nom }}</option>
                     @endforeach
                 </select>
+                @if(!$directionId)<span class="filter-hint"></span>@endif
             </div>
-            @endif
             <div class="filter-group">
                 <label>Fonction</label>
                 <select wire:model.live="fonctionId" class="f-select">
@@ -189,7 +234,7 @@
     @else
         <div class="agents-grid">
             <div class="empty-state">
-                <div class="empty-icon"></div>
+                <div class="empty-icon">🔍</div>
                 <h3>Aucun agent trouvé</h3>
                 <p>Essayez de modifier votre recherche ou vos filtres</p>
             </div>

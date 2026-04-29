@@ -15,7 +15,7 @@
             <!-- SEARCH & FILTER BAR -->
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 250px; border-right: 1px solid #e2e8f0;">
-                    <span style="color: #94a3b8;">🔍</span>
+                    <span style="color: #94a3b8;"></span>
                     <input wire:model.live="search" type="text" placeholder="Rechercher une entité..." style="border: none; outline: none; flex: 1; font-size: 0.9rem;" />
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
@@ -42,7 +42,7 @@
                         @forelse($entities as $entity)
                             <tr style="border-bottom: 1px solid #f1f5f9;">
                                 <td style="padding: 1rem; color: #0f172a; font-weight: 500;">
-                                    {{ $entity->nom }}
+                                    {{ $entity->nom }} ({{ $entity->code }})
                                     @if($entity->parent)
                                         <br><span style="color: #94a3b8; font-size: 0.85rem;">↳ {{ $entity->parent->nom }}</span>
                                     @endif

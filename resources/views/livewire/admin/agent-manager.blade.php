@@ -201,7 +201,7 @@
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label class="form-label">Matricule</label>
-                                    <input type="text" wire:model="form.matricule" readonly class="form-input" style="background:#f8fafc;">
+                                    <input type="text" wire:model="form.matricule"  class="form-input" style="background:#f8fafc;">
                                     @error('form.matricule') <span style="color:#ef4444;font-size:0.75rem;margin-top:0.25rem;display:block;">{{ $message }}</span> @enderror
                                 </div>
 
