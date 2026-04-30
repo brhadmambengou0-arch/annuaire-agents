@@ -106,7 +106,10 @@ class AgentProfile extends Component
 
             $path = $this->photo->store('photos', 'public');
             $this->agent->update(['photo_url' => $path]);
+            $this->agent->refresh();
             $this->photo = null;
+            $this->js("document.querySelector('.avatar-wrap img') $this->photo = null;$this->photo = null; (document.querySelector('.avatar-wrap img').src = '" . asset('storage/' . $this->agent->photo_url) . "')");
+            
         }
 
         if (!empty($validated['password'])) {
@@ -126,6 +129,7 @@ class AgentProfile extends Component
 
     public function render()
     {
+        $this->agent = $this->agent->fresh();
         return view('livewire.agent-profile');
     }
 }

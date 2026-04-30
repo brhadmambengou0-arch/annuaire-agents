@@ -139,7 +139,7 @@
 
         {{-- Barre de filtres --}}
         <div class="toolbar">
-            <input wire:model.live.debounce.300ms="search" type="text"
+            <input wire:model.live="search" type="text"
                    placeholder="Rechercher une fonction..." class="search-input">
             <select wire:model.live="filterNiveau" class="filter-select">
                 <option value="">Tous les niveaux</option>
@@ -168,7 +168,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($fonctions as $fonction)
+                    @php $grouped = $fonctions->groupBy("niveau")->sortKeys(); @endphp
+                    @forelse($grouped as $niveau => $groupe)
+                    <tr><td colspan="6" style="background:#f0f9ff;padding:0.6rem 1rem;font-size:0.72rem;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:0.06em;">Niveau {{ $niveau }} — ({{ $groupe->count() }})</td></tr>
+                    @foreach($groupe as $fonction)
                     <tr wire:key="fonction-{{ $fonction->id }}">
                         <td>
                             <div class="fonction-name">{{ $fonction->libelle }}</div>
@@ -217,6 +220,7 @@
     @endif
 </td>
                     </tr>
+                    @endforeach
                     @empty
                     <tr>
                         <td colspan="6" class="empty-state">Aucune fonction trouvée.</td>
@@ -228,7 +232,7 @@
 
         {{-- Pagination --}}
         <div style="margin-top:1rem;">
-            {{ $fonctions->links() }}
+            
         </div>
 
     </div>
